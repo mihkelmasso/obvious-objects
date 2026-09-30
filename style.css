@@ -1,420 +1,715 @@
-const header = document.querySelector("header");
-const floatingItems = document.querySelectorAll(".tile");
-const cursor = document.querySelector(".cursor");
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  background:#f7f7f5;
+  color:#111;
+  overflow-x:hidden;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
 
 
-/* =========================================
+/* =========================
    HEADER
-   ========================================= */
+   ========================= */
 
-function updateHeader() {
-  if (!header) return;
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:100;
 
-  header.classList.toggle(
-    "scrolled",
-    window.scrollY > 60
-  );
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+
+  padding:52px 10vw 24px;
+
+  background:rgba(247,247,245,.82);
+  backdrop-filter:blur(14px);
+
+  transition:
+    padding .55s cubic-bezier(.22,1,.36,1),
+    background .55s ease;
+}
+
+header.scrolled{
+  padding:18px 10vw 14px;
+  background:rgba(247,247,245,.90);
+}
+
+.logo{
+  font-size:52px;
+  letter-spacing:.02em;
+  font-weight:400;
+
+  transition:
+    font-size .55s cubic-bezier(.22,1,.36,1),
+    letter-spacing .55s cubic-bezier(.22,1,.36,1);
+}
+
+header.scrolled .logo{
+  font-size:20px;
+  letter-spacing:.08em;
 }
 
 
-/* =========================================
-   FLOATING GALLERY
-   ========================================= */
+/* =========================
+   HOME GALLERY
+   ========================= */
 
-function updateGallery() {
+.gallery{
+  position:relative;
+  min-height:900vh;
+  padding-bottom:40vh;
+}
 
-  const scroll = window.scrollY;
+.tile{
+  position:absolute;
+  display:block;
+  overflow:hidden;
+  will-change:transform;
+  transform-origin:center center;
+}
 
-  floatingItems.forEach((item, index) => {
+.tile img{
+  width:100%;
+  height:auto;
+  display:block;
 
-    const baseSpeed =
-      parseFloat(item.dataset.speed || 0.03);
-
-    const baseScale =
-      parseFloat(item.dataset.scale || 1);
-
-    const phase =
-      index * 0.85;
-
-
-    /*
-      Depth layers.
-      Foreground moves more,
-      background moves less.
-    */
-
-    let depth = 1;
-
-    if(index % 3 === 0){
-      depth = 1.35;
-    }
-
-    if(index % 3 === 1){
-      depth = 0.85;
-    }
-
-    if(index % 3 === 2){
-      depth = 0.55;
-    }
-
-
-    let x = 0;
-
-    let y =
-      scroll *
-      baseSpeed *
-      depth;
-
-
-    /*
-      Different movement personalities.
-    */
-
-    if(index % 5 === 0){
-
-      x =
-        Math.sin(
-          scroll * 0.0017 + phase
-        ) *
-        115 *
-        depth;
-
-      y +=
-        Math.cos(
-          scroll * 0.0013 + phase
-        ) *
-        45 *
-        depth;
-    }
-
-
-    if(index % 5 === 1){
-
-      x =
-        -Math.sin(
-          scroll * 0.0015 + phase
-        ) *
-        105 *
-        depth;
-
-      y +=
-        Math.sin(
-          scroll * 0.0019 + phase
-        ) *
-        55 *
-        depth;
-    }
-
-
-    if(index % 5 === 2){
-
-      x =
-        Math.cos(
-          scroll * 0.0017 + phase
-        ) *
-        85 *
-        depth;
-
-      y +=
-        Math.sin(
-          scroll * 0.0012 + phase
-        ) *
-        90 *
-        depth;
-    }
-
-
-    if(index % 5 === 3){
-
-      x =
-        Math.sin(
-          scroll * 0.0013 + phase
-        ) *
-        135 *
-        depth;
-
-      y +=
-        Math.cos(
-          scroll * 0.0017 + phase
-        ) *
-        65 *
-        depth;
-    }
-
-
-    if(index % 5 === 4){
-
-      x =
-        -Math.cos(
-          scroll * 0.0015 + phase
-        ) *
-        95 *
-        depth;
-
-      y +=
-        Math.sin(
-          scroll * 0.0016 + phase
-        ) *
-        75 *
-        depth;
-    }
-
-
-    /*
-      Subtle breathing scale.
-    */
-
-    const scale =
-      baseScale +
-      Math.sin(
-        scroll * 0.00125 + phase
-      ) *
-      0.045 *
-      depth;
-
-
-    /*
-      Almost invisible rotation.
-    */
-
-    const rotate =
-      Math.sin(
-        scroll * 0.0009 + phase
-      ) *
-      0.8 *
-      depth;
-
-
-    item.style.transform =
-      `translate3d(${x}px, ${y}px, 0)
-       scale(${scale})
-       rotate(${rotate}deg)`;
-  });
+  transition:
+    opacity .4s ease,
+    transform .9s cubic-bezier(.22,1,.36,1),
+    filter .4s ease;
 }
 
 
-/* =========================================
-   MAIN SCROLL LOOP
-   ========================================= */
+/* =========================
+   GALLERY POSITIONS
+   ========================= */
 
-function updatePage(){
-
-  updateHeader();
-  updateGallery();
-
+.t1{
+  width:26vw;
+  left:9vw;
+  top:8vh;
 }
 
-window.addEventListener(
-  "scroll",
-  updatePage,
-  {passive:true}
-);
+.t2{
+  width:23vw;
+  right:9vw;
+  top:75vh;
+}
 
-window.addEventListener(
-  "load",
-  updatePage
-);
+.t3{
+  width:28vw;
+  left:3vw;
+  top:145vh;
+}
 
-window.addEventListener(
-  "resize",
-  updatePage
-);
+.t4{
+  width:24vw;
+  right:17vw;
+  top:215vh;
+}
 
+.t5{
+  width:21vw;
+  left:20vw;
+  top:285vh;
+}
 
-/* =========================================
-   INERTIA DONUT CURSOR
-   ========================================= */
+.t6{
+  width:19vw;
+  right:5vw;
+  top:350vh;
+}
 
-if(
-  cursor &&
-  window.matchMedia("(pointer:fine)").matches
-){
+.t7{
+  width:27vw;
+  left:38vw;
+  top:415vh;
+}
 
-  let mouseX =
-    window.innerWidth / 2;
+.t8{
+  width:22vw;
+  left:7vw;
+  top:485vh;
+}
 
-  let mouseY =
-    window.innerHeight / 2;
+.t9{
+  width:25vw;
+  right:13vw;
+  top:550vh;
+}
 
+.t10{
+  width:28vw;
+  left:25vw;
+  top:615vh;
+}
 
-  let cursorX = mouseX;
-  let cursorY = mouseY;
+.t11{
+  width:18vw;
+  right:6vw;
+  top:680vh;
+}
 
+.t12{
+  width:24vw;
+  left:9vw;
+  top:745vh;
+}
 
-  let previousX = cursorX;
-  let previousY = cursorY;
-
-
-  window.addEventListener(
-    "mousemove",
-    (event) => {
-
-      mouseX = event.clientX;
-      mouseY = event.clientY;
-
-      cursor.classList.remove(
-        "hidden"
-      );
-    }
-  );
-
-
-  function animateCursor(){
-
-    /*
-      Fast response with
-      only subtle inertia.
-    */
-
-    cursorX +=
-      (mouseX - cursorX) *
-      0.22;
-
-    cursorY +=
-      (mouseY - cursorY) *
-      0.22;
-
-
-    const dx =
-      cursorX - previousX;
-
-    const dy =
-      cursorY - previousY;
+.t13{
+  width:27vw;
+  right:22vw;
+  top:815vh;
+}
 
 
-    const speed =
-      Math.sqrt(
-        dx * dx +
-        dy * dy
-      );
+/* =========================
+   STATIC PAGES
+   ========================= */
+
+.page{
+  padding:180px 10vw 120px;
+}
+
+.page h1{
+  font-size:64px;
+  font-weight:400;
+  margin-bottom:40px;
+}
+
+.page p{
+  max-width:720px;
+  font-size:19px;
+  line-height:1.65;
+  color:#222;
+}
 
 
-    /*
-      Small amount of
-      physical stretching.
-    */
+/* =========================
+   PRODUCT PAGES
+   ========================= */
 
-    const stretch =
-      Math.min(
-        speed * 0.08,
-        8
-      );
+.product-page{
+  padding:160px 8vw 100px;
+}
+
+.product-hero{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:70px;
+  align-items:start;
+}
+
+.product-hero img,
+.gallery-grid img{
+  width:100%;
+}
+
+.product-info h1{
+  font-size:58px;
+  font-weight:400;
+  margin-bottom:24px;
+}
+
+.price{
+  font-size:22px;
+  margin-bottom:32px;
+}
+
+.product-info p{
+  font-size:18px;
+  line-height:1.6;
+  color:#333;
+  margin-bottom:32px;
+}
+
+.gallery-grid{
+  margin-top:90px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+}
 
 
-    cursor.style.left =
-      cursorX + "px";
+/* =========================
+   EXHIBITION PAGES
+   ========================= */
 
-    cursor.style.top =
-      cursorY + "px";
+.exhibition-page{
+  position:relative;
+  min-height:430vh;
+  padding:0 8vw 30vh;
+  overflow:hidden;
+}
+
+.motion-item{
+  position:absolute;
+  will-change:transform;
+  transform-origin:center center;
+}
 
 
-    cursor.style.transform =
-      `translate(-50%, -50%)
-       scale(
-         ${1 + stretch / 100},
-         ${1 - stretch / 320}
-       )`;
+/* TITLE */
+
+.exhibit-title{
+  top:20vh;
+  left:10vw;
+  z-index:4;
+}
+
+.exhibit-title h1{
+  font-size:84px;
+  font-weight:400;
+  letter-spacing:-.045em;
+  line-height:.95;
+}
+
+.exhibit-title p{
+  margin-top:24px;
+  font-size:18px;
+  color:#333;
+}
 
 
-    previousX = cursorX;
-    previousY = cursorY;
+/* IMAGES */
+
+.exhibit-image img{
+  width:100%;
+  display:block;
+}
+
+.image-large{
+  width:58vw;
+  top:62vh;
+  right:5vw;
+  z-index:1;
+}
+
+.image-medium{
+  width:38vw;
+  top:185vh;
+  left:28vw;
+  z-index:2;
+}
 
 
-    requestAnimationFrame(
-      animateCursor
-    );
+/* TEXT */
+
+.description-block{
+  width:36vw;
+  top:118vh;
+  left:12vw;
+  z-index:3;
+
+  font-size:28px;
+  line-height:1.3;
+  letter-spacing:-.02em;
+}
+
+.note-block{
+  width:28vw;
+  top:250vh;
+  right:12vw;
+  z-index:4;
+
+  font-size:20px;
+  line-height:1.45;
+  color:#222;
+}
+
+.description-block p,
+.note-block p{
+  background:rgba(247,247,245,.88);
+  backdrop-filter:blur(6px);
+  padding:.15em .35em;
+
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+}
+
+
+/* INFORMATION */
+
+.info-block{
+  width:44vw;
+  top:340vh;
+  left:10vw;
+  z-index:5;
+
+  background:rgba(247,247,245,.78);
+  backdrop-filter:blur(10px);
+
+  padding:40px;
+}
+
+.info-block h2{
+  font-size:28px;
+  font-weight:400;
+  margin-bottom:34px;
+}
+
+.info-row{
+  display:flex;
+  justify-content:space-between;
+  gap:40px;
+
+  border-bottom:1px solid rgba(0,0,0,.18);
+
+  padding:16px 0;
+
+  font-size:15px;
+}
+
+.info-row span:first-child{
+  color:#777;
+}
+
+.info-block form{
+  margin-top:46px;
+}
+
+
+/* =========================
+   DESK
+   ========================= */
+
+.desk-page .image-large{
+  width:58vw;
+  top:62vh;
+  right:5vw;
+}
+
+.desk-page .description-block{
+  top:118vh;
+  left:12vw;
+}
+
+.desk-page .image-medium{
+  top:185vh;
+  left:28vw;
+}
+
+.desk-page .note-block{
+  top:250vh;
+  right:12vw;
+}
+
+.desk-page .info-block{
+  top:340vh;
+  left:10vw;
+}
+
+
+/* =========================
+   CHAIR
+   ========================= */
+
+.chair-page{
+  min-height:470vh;
+}
+
+.chair-page .image-large{
+  width:48vw;
+  top:70vh;
+  left:8vw;
+  right:auto;
+}
+
+.chair-page .description-block{
+  width:34vw;
+  top:135vh;
+  right:9vw;
+  left:auto;
+}
+
+.chair-page .image-medium{
+  width:42vw;
+  top:220vh;
+  left:30vw;
+}
+
+.chair-page .note-block{
+  width:30vw;
+  top:300vh;
+  left:12vw;
+  right:auto;
+}
+
+.chair-page .info-block{
+  top:385vh;
+  right:10vw;
+  left:auto;
+}
+
+
+/* =========================
+   SWAN LAMP
+   ========================= */
+
+.lamp-page{
+  min-height:455vh;
+}
+
+.lamp-page .image-large{
+  width:46vw;
+  top:68vh;
+  right:12vw;
+}
+
+.lamp-page .description-block{
+  width:34vw;
+  top:130vh;
+  left:10vw;
+}
+
+.lamp-page .image-medium{
+  width:34vw;
+  top:218vh;
+  right:16vw;
+  left:auto;
+}
+
+.lamp-page .note-block{
+  width:30vw;
+  top:292vh;
+  left:18vw;
+  right:auto;
+}
+
+.lamp-page .info-block{
+  top:370vh;
+  left:10vw;
+}
+
+
+/* =========================
+   FORMS
+   ========================= */
+
+form{
+  margin-top:50px;
+  max-width:560px;
+}
+
+input,
+textarea{
+  width:100%;
+
+  border:none;
+  border-bottom:1px solid #999;
+
+  background:transparent;
+
+  padding:14px 0;
+  margin-bottom:24px;
+
+  font-family:inherit;
+  font-size:15px;
+}
+
+button{
+  border:1px solid #111;
+  background:transparent;
+
+  padding:14px 26px;
+
+  font-family:inherit;
+  cursor:pointer;
+
+  transition:
+    background .25s ease,
+    color .25s ease;
+}
+
+button:hover{
+  background:#111;
+  color:#fff;
+}
+
+
+/* =========================
+   FOOTER
+   ========================= */
+
+footer{
+  position:relative;
+  z-index:20;
+
+  padding:80px 10vw;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+
+  color:#777;
+  font-size:13px;
+}
+
+footer a{
+  color:#222;
+  transition:opacity .25s ease;
+}
+
+footer a:hover{
+  opacity:.5;
+}
+
+
+/* =========================
+   CUSTOM CURSOR
+   ========================= */
+
+@media (pointer:fine){
+
+  body,
+  a,
+  button{
+    cursor:none;
   }
 
+  .cursor{
+    position:fixed;
 
-  animateCursor();
+    top:0;
+    left:0;
 
+    width:72px;
+    height:72px;
 
-  /*
-    Normal links.
-  */
+    border:24px solid #000;
+    border-radius:50%;
 
-  document
-    .querySelectorAll("a, button")
-    .forEach((element) => {
+    pointer-events:none;
 
-      element.addEventListener(
-        "mouseenter",
-        () => {
-          cursor.classList.add(
-            "hover"
-          );
-        }
-      );
+    z-index:999999;
 
+    transform:translate(-50%,-50%);
 
-      element.addEventListener(
-        "mouseleave",
-        () => {
-          cursor.classList.remove(
-            "hover"
-          );
-        }
-      );
+    transition:
+      width .35s ease,
+      height .35s ease,
+      border-width .35s ease,
+      opacity .25s ease;
+  }
 
-    });
+  .cursor.hover{
+    width:110px;
+    height:110px;
+    border-width:34px;
+  }
 
+  .cursor.product{
+    width:140px;
+    height:140px;
+    border-width:42px;
+  }
 
-  /*
-    Product/gallery hover.
-  */
-
-  document
-    .querySelectorAll(
-      ".tile.product, .motion-link"
-    )
-    .forEach((element) => {
-
-      element.addEventListener(
-        "mouseenter",
-        () => {
-
-          cursor.classList.remove(
-            "hover"
-          );
-
-          cursor.classList.add(
-            "product"
-          );
-
-        }
-      );
+  .cursor.hidden{
+    opacity:0;
+  }
+}
 
 
-      element.addEventListener(
-        "mouseleave",
-        () => {
+/* =========================
+   MOBILE
+   ========================= */
 
-          cursor.classList.remove(
-            "product"
-          );
+@media(max-width:900px){
 
-        }
-      );
+  header{
+    padding:30px 24px;
+  }
 
-    });
+  .logo{
+    font-size:34px;
+  }
 
+  .gallery{
+    min-height:auto;
+    padding:140px 24px 80px;
 
-  document.addEventListener(
-    "mouseleave",
-    () => {
-      cursor.classList.add(
-        "hidden"
-      );
-    }
-  );
+    display:flex;
+    flex-direction:column;
+    gap:50px;
+  }
 
+  .tile{
+    position:relative;
+    width:100%!important;
+    left:auto!important;
+    right:auto!important;
+    top:auto!important;
+    transform:none!important;
+  }
 
-  document.addEventListener(
-    "mouseenter",
-    () => {
-      cursor.classList.remove(
-        "hidden"
-      );
-    }
-  );
+  .page h1,
+  .product-info h1{
+    font-size:42px;
+  }
+
+  .product-hero,
+  .gallery-grid{
+    grid-template-columns:1fr;
+  }
+
+  .exhibition-page{
+    min-height:auto;
+    padding:140px 24px 80px;
+
+    display:flex;
+    flex-direction:column;
+    gap:48px;
+
+    overflow:visible;
+  }
+
+  .motion-item{
+    position:relative;
+    top:auto!important;
+    left:auto!important;
+    right:auto!important;
+    width:100%!important;
+    transform:none!important;
+  }
+
+  .exhibit-title h1{
+    font-size:48px;
+  }
+
+  .description-block{
+    font-size:22px;
+  }
+
+  .info-block{
+    padding:28px;
+  }
+
+  .info-row{
+    flex-direction:column;
+    gap:6px;
+  }
+
+  footer{
+    padding:50px 24px;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:20px;
+  }
 }
