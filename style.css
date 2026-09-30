@@ -1,255 +1,420 @@
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+const header = document.querySelector("header");
+const floatingItems = document.querySelectorAll(".tile");
+const cursor = document.querySelector(".cursor");
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+function updateHeader() {
+  if (!header) return;
+
+  header.classList.toggle(
+    "scrolled",
+    window.scrollY > 60
+  );
 }
 
-html{
-  scroll-behavior:smooth;
+
+/* =========================================
+   FLOATING GALLERY
+   ========================================= */
+
+function updateGallery() {
+
+  const scroll = window.scrollY;
+
+  floatingItems.forEach((item, index) => {
+
+    const baseSpeed =
+      parseFloat(item.dataset.speed || 0.03);
+
+    const baseScale =
+      parseFloat(item.dataset.scale || 1);
+
+    const phase =
+      index * 0.85;
+
+
+    /*
+      Depth layers.
+      Foreground moves more,
+      background moves less.
+    */
+
+    let depth = 1;
+
+    if(index % 3 === 0){
+      depth = 1.35;
+    }
+
+    if(index % 3 === 1){
+      depth = 0.85;
+    }
+
+    if(index % 3 === 2){
+      depth = 0.55;
+    }
+
+
+    let x = 0;
+
+    let y =
+      scroll *
+      baseSpeed *
+      depth;
+
+
+    /*
+      Different movement personalities.
+    */
+
+    if(index % 5 === 0){
+
+      x =
+        Math.sin(
+          scroll * 0.0017 + phase
+        ) *
+        115 *
+        depth;
+
+      y +=
+        Math.cos(
+          scroll * 0.0013 + phase
+        ) *
+        45 *
+        depth;
+    }
+
+
+    if(index % 5 === 1){
+
+      x =
+        -Math.sin(
+          scroll * 0.0015 + phase
+        ) *
+        105 *
+        depth;
+
+      y +=
+        Math.sin(
+          scroll * 0.0019 + phase
+        ) *
+        55 *
+        depth;
+    }
+
+
+    if(index % 5 === 2){
+
+      x =
+        Math.cos(
+          scroll * 0.0017 + phase
+        ) *
+        85 *
+        depth;
+
+      y +=
+        Math.sin(
+          scroll * 0.0012 + phase
+        ) *
+        90 *
+        depth;
+    }
+
+
+    if(index % 5 === 3){
+
+      x =
+        Math.sin(
+          scroll * 0.0013 + phase
+        ) *
+        135 *
+        depth;
+
+      y +=
+        Math.cos(
+          scroll * 0.0017 + phase
+        ) *
+        65 *
+        depth;
+    }
+
+
+    if(index % 5 === 4){
+
+      x =
+        -Math.cos(
+          scroll * 0.0015 + phase
+        ) *
+        95 *
+        depth;
+
+      y +=
+        Math.sin(
+          scroll * 0.0016 + phase
+        ) *
+        75 *
+        depth;
+    }
+
+
+    /*
+      Subtle breathing scale.
+    */
+
+    const scale =
+      baseScale +
+      Math.sin(
+        scroll * 0.00125 + phase
+      ) *
+      0.045 *
+      depth;
+
+
+    /*
+      Almost invisible rotation.
+    */
+
+    const rotate =
+      Math.sin(
+        scroll * 0.0009 + phase
+      ) *
+      0.8 *
+      depth;
+
+
+    item.style.transform =
+      `translate3d(${x}px, ${y}px, 0)
+       scale(${scale})
+       rotate(${rotate}deg)`;
+  });
 }
 
-body{
-  font-family:Arial, Helvetica, sans-serif;
-  background:#f7f7f5;
-  color:#111;
-  overflow-x:hidden;
+
+/* =========================================
+   MAIN SCROLL LOOP
+   ========================================= */
+
+function updatePage(){
+
+  updateHeader();
+  updateGallery();
+
 }
 
-a{
-  color:inherit;
-  text-decoration:none;
-}
+window.addEventListener(
+  "scroll",
+  updatePage,
+  {passive:true}
+);
 
-header{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  z-index:100;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  padding:52px 10vw 24px;
-  background:rgba(247,247,245,.82);
-  backdrop-filter:blur(14px);
-  transition:.55s cubic-bezier(.22,1,.36,1);
-}
+window.addEventListener(
+  "load",
+  updatePage
+);
 
-header.scrolled{
-  padding:18px 10vw 14px;
-  background:rgba(247,247,245,.9);
-}
+window.addEventListener(
+  "resize",
+  updatePage
+);
 
-.logo{
-  font-size:52px;
-  letter-spacing:.02em;
-  font-weight:400;
-  transition:.55s cubic-bezier(.22,1,.36,1);
-}
 
-header.scrolled .logo{
-  font-size:20px;
-  letter-spacing:.08em;
-}
+/* =========================================
+   INERTIA DONUT CURSOR
+   ========================================= */
 
-.gallery{
-  position:relative;
-  min-height:650vh;
-  padding-bottom:30vh;
-}
+if(
+  cursor &&
+  window.matchMedia("(pointer:fine)").matches
+){
 
-.tile{
-  position:absolute;
-  display:block;
-  overflow:hidden;
-  will-change:transform;
-}
+  let mouseX =
+    window.innerWidth / 2;
 
-.tile img{
-  width:100%;
-  height:auto;
-  display:block;
-  transition:opacity .4s ease, transform .9s cubic-bezier(.22,1,.36,1);
-}
+  let mouseY =
+    window.innerHeight / 2;
 
-.t1{
-  width:32vw;
-  left:10vw;
-  top:16vh;
-}
 
-.t2{
-  width:27vw;
-  right:10vw;
-  top:62vh;
-}
+  let cursorX = mouseX;
+  let cursorY = mouseY;
 
-.t3{
-  width:34vw;
-  left:2vw;
-  top:112vh;
-}
 
-.t4{
-  width:29vw;
-  right:15vw;
-  top:158vh;
-}
+  let previousX = cursorX;
+  let previousY = cursorY;
 
-.t5{
-  width:25vw;
-  left:18vw;
-  top:207vh;
-}
 
-.t6{
-  width:22vw;
-  right:4vw;
-  top:250vh;
-}
+  window.addEventListener(
+    "mousemove",
+    (event) => {
 
-.t7{
-  width:31vw;
-  left:34vw;
-  top:292vh;
-}
+      mouseX = event.clientX;
+      mouseY = event.clientY;
 
-.t8{
-  width:24vw;
-  left:6vw;
-  top:338vh;
-}
+      cursor.classList.remove(
+        "hidden"
+      );
+    }
+  );
 
-.t9{
-  width:30vw;
-  right:12vw;
-  top:382vh;
-}
 
-.t10{
-  width:34vw;
-  left:25vw;
-  top:428vh;
-}
+  function animateCursor(){
 
-.t11{
-  width:21vw;
-  right:5vw;
-  top:474vh;
-}
+    /*
+      Fast response with
+      only subtle inertia.
+    */
 
-.t12{
-  width:28vw;
-  left:8vw;
-  top:520vh;
-}
+    cursorX +=
+      (mouseX - cursorX) *
+      0.22;
 
-.t13{
-  width:32vw;
-  right:22vw;
-  top:570vh;
-}
+    cursorY +=
+      (mouseY - cursorY) *
+      0.22;
 
-footer{
-  position:relative;
-  z-index:20;
-  min-height:180px;
-  padding:50px 10vw;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:30px;
-  color:#666;
-  font-size:13px;
-  background:#f7f7f5;
-}
 
-footer a{
-  color:#222;
-  transition:opacity .25s ease;
-}
+    const dx =
+      cursorX - previousX;
 
-footer a:hover{
-  opacity:.5;
-}
+    const dy =
+      cursorY - previousY;
 
-footer span{
-  color:#999;
-}
 
-@media (pointer:fine){
+    const speed =
+      Math.sqrt(
+        dx * dx +
+        dy * dy
+      );
 
-  body,
-  a,
-  button{
-    cursor:none;
+
+    /*
+      Small amount of
+      physical stretching.
+    */
+
+    const stretch =
+      Math.min(
+        speed * 0.08,
+        8
+      );
+
+
+    cursor.style.left =
+      cursorX + "px";
+
+    cursor.style.top =
+      cursorY + "px";
+
+
+    cursor.style.transform =
+      `translate(-50%, -50%)
+       scale(
+         ${1 + stretch / 100},
+         ${1 - stretch / 320}
+       )`;
+
+
+    previousX = cursorX;
+    previousY = cursorY;
+
+
+    requestAnimationFrame(
+      animateCursor
+    );
   }
 
-  .cursor{
-    position:fixed;
-    top:0;
-    left:0;
-    width:72px;
-    height:72px;
-    border:24px solid #000;
-    border-radius:50%;
-    pointer-events:none;
-    z-index:999999;
-    transform:translate(-50%,-50%);
-    transition:
-      width .35s ease,
-      height .35s ease,
-      border-width .35s ease,
-      opacity .25s ease;
-  }
 
-  .cursor.hover{
-    width:110px;
-    height:110px;
-    border-width:34px;
-  }
+  animateCursor();
 
-  .cursor.product{
-    width:140px;
-    height:140px;
-    border-width:42px;
-  }
 
-  .cursor.hidden{
-    opacity:0;
-  }
-}
+  /*
+    Normal links.
+  */
 
-@media(max-width:900px){
+  document
+    .querySelectorAll("a, button")
+    .forEach((element) => {
 
-  header{
-    padding:30px 24px;
-  }
+      element.addEventListener(
+        "mouseenter",
+        () => {
+          cursor.classList.add(
+            "hover"
+          );
+        }
+      );
 
-  .logo{
-    font-size:34px;
-  }
 
-  .gallery{
-    min-height:auto;
-    padding:140px 24px 80px;
-    display:flex;
-    flex-direction:column;
-    gap:50px;
-  }
+      element.addEventListener(
+        "mouseleave",
+        () => {
+          cursor.classList.remove(
+            "hover"
+          );
+        }
+      );
 
-  .tile{
-    position:relative;
-    width:100%!important;
-    left:auto!important;
-    right:auto!important;
-    top:auto!important;
-    transform:none!important;
-  }
+    });
 
-  footer{
-    padding:50px 24px;
-    flex-direction:column;
-    align-items:flex-start;
-  }
+
+  /*
+    Product/gallery hover.
+  */
+
+  document
+    .querySelectorAll(
+      ".tile.product, .motion-link"
+    )
+    .forEach((element) => {
+
+      element.addEventListener(
+        "mouseenter",
+        () => {
+
+          cursor.classList.remove(
+            "hover"
+          );
+
+          cursor.classList.add(
+            "product"
+          );
+
+        }
+      );
+
+
+      element.addEventListener(
+        "mouseleave",
+        () => {
+
+          cursor.classList.remove(
+            "product"
+          );
+
+        }
+      );
+
+    });
+
+
+  document.addEventListener(
+    "mouseleave",
+    () => {
+      cursor.classList.add(
+        "hidden"
+      );
+    }
+  );
+
+
+  document.addEventListener(
+    "mouseenter",
+    () => {
+      cursor.classList.remove(
+        "hidden"
+      );
+    }
+  );
 }
