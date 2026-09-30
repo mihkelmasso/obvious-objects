@@ -1,165 +1,235 @@
 const header = document.querySelector("header");
 const floatingItems = document.querySelectorAll(".tile");
-const exhibitItems = document.querySelectorAll(".motion-item");
 const cursor = document.querySelector(".cursor");
 
-/* HEADER + FLOATING HOME GALLERY */
-function updateMotion() {
+function updateMotion(){
+
   const scroll = window.scrollY;
 
-  if (header) {
+  if(header){
     header.classList.toggle("scrolled", scroll > 60);
   }
 
-  floatingItems.forEach((item, index) => {
-    const baseSpeed = parseFloat(item.dataset.speed || 0.04);
+  floatingItems.forEach((item,index)=>{
+
+    const baseSpeed = parseFloat(item.dataset.speed || 0.03);
     const baseScale = parseFloat(item.dataset.scale || 1);
-    const phase = index * 0.9;
+    const phase = index * 0.85;
 
     let depth = 1;
-    if (index % 3 === 0) depth = 1.65;
-    if (index % 3 === 1) depth = 1.0;
-    if (index % 3 === 2) depth = 0.55;
+
+    if(index % 3 === 0){
+      depth = 1.35;
+    }
+
+    if(index % 3 === 1){
+      depth = 0.85;
+    }
+
+    if(index % 3 === 2){
+      depth = 0.55;
+    }
 
     let x = 0;
     let y = scroll * baseSpeed * depth;
 
-    if (index % 5 === 0) {
-      x = Math.sin(scroll * 0.002 + phase) * 150 * depth;
-      y += Math.cos(scroll * 0.0016 + phase) * 55 * depth;
+    if(index % 5 === 0){
+
+      x =
+        Math.sin(scroll * 0.0017 + phase)
+        * 115
+        * depth;
+
+      y +=
+        Math.cos(scroll * 0.0013 + phase)
+        * 45
+        * depth;
     }
 
-    if (index % 5 === 1) {
-      x = -Math.sin(scroll * 0.0018 + phase) * 130 * depth;
-      y += Math.sin(scroll * 0.0022 + phase) * 75 * depth;
+    if(index % 5 === 1){
+
+      x =
+        -Math.sin(scroll * 0.0015 + phase)
+        * 105
+        * depth;
+
+      y +=
+        Math.sin(scroll * 0.0019 + phase)
+        * 55
+        * depth;
     }
 
-    if (index % 5 === 2) {
-      x = Math.cos(scroll * 0.002 + phase) * 95 * depth;
-      y += Math.sin(scroll * 0.0014 + phase) * 125 * depth;
+    if(index % 5 === 2){
+
+      x =
+        Math.cos(scroll * 0.0017 + phase)
+        * 85
+        * depth;
+
+      y +=
+        Math.sin(scroll * 0.0012 + phase)
+        * 90
+        * depth;
     }
 
-    if (index % 5 === 3) {
-      x = Math.sin(scroll * 0.0015 + phase) * 190 * depth;
-      y += Math.cos(scroll * 0.002 + phase) * 85 * depth;
+    if(index % 5 === 3){
+
+      x =
+        Math.sin(scroll * 0.0013 + phase)
+        * 135
+        * depth;
+
+      y +=
+        Math.cos(scroll * 0.0017 + phase)
+        * 65
+        * depth;
     }
 
-    if (index % 5 === 4) {
-      x = -Math.cos(scroll * 0.0017 + phase) * 115 * depth;
-      y += Math.sin(scroll * 0.0019 + phase) * 105 * depth;
+    if(index % 5 === 4){
+
+      x =
+        -Math.cos(scroll * 0.0015 + phase)
+        * 95
+        * depth;
+
+      y +=
+        Math.sin(scroll * 0.0016 + phase)
+        * 75
+        * depth;
     }
 
     const scale =
-      baseScale + Math.sin(scroll * 0.0015 + phase) * 0.08 * depth;
+      baseScale +
+      Math.sin(scroll * 0.00125 + phase)
+      * 0.045
+      * depth;
 
     const rotate =
-      Math.sin(scroll * 0.001 + phase) * 1.1 * depth;
+      Math.sin(scroll * 0.0009 + phase)
+      * 0.8
+      * depth;
 
     item.style.transform =
-      `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rotate}deg)`;
-  });
-
-  /* PRODUCT PAGE EXHIBITION MOTION */
-  exhibitItems.forEach((item, index) => {
-    const rect = item.getBoundingClientRect();
-    const center = rect.top + rect.height / 2;
-    const viewportCenter = window.innerHeight / 2;
-    const distance = center - viewportCenter;
-
-    const phase = index * 1.15;
-    const depth = index % 3 === 0 ? 1.25 : index % 3 === 1 ? 0.85 : 1.05;
-
-    const x =
-      Math.sin(scroll * 0.0016 + phase) * 90 * depth -
-      distance * 0.035 * depth;
-
-    const y =
-      Math.cos(scroll * 0.0013 + phase) * 60 * depth +
-      distance * 0.018 * depth;
-
-    const scale =
-      1 + Math.sin(scroll * 0.0014 + phase) * 0.055 * depth;
-
-    const rotate =
-      Math.sin(scroll * 0.001 + phase) * 0.8 * depth;
-
-    item.style.transform =
-      `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rotate}deg)`;
+      `translate3d(${x}px,${y}px,0) scale(${scale}) rotate(${rotate}deg)`;
   });
 }
 
-window.addEventListener("scroll", updateMotion, { passive: true });
-window.addEventListener("load", updateMotion);
-window.addEventListener("resize", updateMotion);
+window.addEventListener(
+  "scroll",
+  updateMotion,
+  {passive:true}
+);
+
+window.addEventListener(
+  "load",
+  updateMotion
+);
+
+window.addEventListener(
+  "resize",
+  updateMotion
+);
 
 
-/* INERTIA DONUT CURSOR */
-if (cursor && window.matchMedia("(pointer:fine)").matches) {
+/* INERTIA CURSOR */
+
+if(
+  cursor &&
+  window.matchMedia("(pointer:fine)").matches
+){
+
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
 
   let cursorX = mouseX;
   let cursorY = mouseY;
 
-  let prevX = cursorX;
-  let prevY = cursorY;
+  let previousX = cursorX;
+  let previousY = cursorY;
 
-  window.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    cursor.classList.remove("hidden");
-  });
+  window.addEventListener(
+    "mousemove",
+    (event)=>{
 
-  function animateCursor() {
-    cursorX += (mouseX - cursorX) * 0.22;
-    cursorY += (mouseY - cursorY) * 0.22;
+      mouseX = event.clientX;
+      mouseY = event.clientY;
 
-    const dx = cursorX - prevX;
-    const dy = cursorY - prevY;
-    const speed = Math.sqrt(dx * dx + dy * dy);
+      cursor.classList.remove("hidden");
+    }
+  );
 
-    const stretch = Math.min(speed * 0.08, 8);
+  function animateCursor(){
 
-    cursor.style.left = cursorX + "px";
-    cursor.style.top = cursorY + "px";
+    cursorX +=
+      (mouseX - cursorX) * 0.22;
+
+    cursorY +=
+      (mouseY - cursorY) * 0.22;
+
+    const dx =
+      cursorX - previousX;
+
+    const dy =
+      cursorY - previousY;
+
+    const speed =
+      Math.sqrt(dx * dx + dy * dy);
+
+    const stretch =
+      Math.min(speed * 0.08,8);
+
+    cursor.style.left =
+      cursorX + "px";
+
+    cursor.style.top =
+      cursorY + "px";
 
     cursor.style.transform =
-      `translate(-50%, -50%) scale(${1 + stretch / 100}, ${1 - stretch / 320})`;
+      `translate(-50%,-50%)
+       scale(${1 + stretch / 100},
+              ${1 - stretch / 320})`;
 
-    prevX = cursorX;
-    prevY = cursorY;
+    previousX = cursorX;
+    previousY = cursorY;
 
-    requestAnimationFrame(animateCursor);
+    requestAnimationFrame(
+      animateCursor
+    );
   }
 
   animateCursor();
 
-  document.querySelectorAll("a, button").forEach((el) => {
-    el.addEventListener("mouseenter", () => {
-      cursor.classList.add("hover");
+  document
+    .querySelectorAll("a,button")
+    .forEach((element)=>{
+
+      element.addEventListener(
+        "mouseenter",
+        ()=>{
+          cursor.classList.add("hover");
+        }
+      );
+
+      element.addEventListener(
+        "mouseleave",
+        ()=>{
+          cursor.classList.remove("hover");
+        }
+      );
+
     });
 
-    el.addEventListener("mouseleave", () => {
-      cursor.classList.remove("hover");
-    });
-  });
+  document.addEventListener(
+    "mouseleave",
+    ()=>{
+      cursor.classList.add("hidden");
+    }
+  );
 
-  document.querySelectorAll(".tile.product, .motion-link").forEach((el) => {
-    el.addEventListener("mouseenter", () => {
-      cursor.classList.remove("hover");
-      cursor.classList.add("product");
-    });
-
-    el.addEventListener("mouseleave", () => {
-      cursor.classList.remove("product");
-    });
-  });
-
-  document.addEventListener("mouseleave", () => {
-    cursor.classList.add("hidden");
-  });
-
-  document.addEventListener("mouseenter", () => {
-    cursor.classList.remove("hidden");
-  });
+  document.addEventListener(
+    "mouseenter",
+    ()=>{
+      cursor.classList.remove("hidden");
+    }
+  );
 }
