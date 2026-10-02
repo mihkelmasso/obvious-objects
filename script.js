@@ -59,14 +59,14 @@ async function loadGallery(){
     }
 
 
-    /* Remove existing tiles */
+    /* Remove hard-coded gallery tiles */
 
     gallery
       .querySelectorAll(".tile")
       .forEach(tile => tile.remove());
 
 
-    /* Create tiles */
+    /* Create gallery tiles */
 
     imageFiles.forEach((file,index) => {
 
@@ -494,11 +494,11 @@ function updateGallery(){
 
 
 /* =========================================
-   UNDER / OVER / CONSTRUCTION / DEFINED
-   FIRST SECTION ONLY
+   FIRST WATERMARK COMPOSITION
    ========================================= */
 
 const firstWatermark = [
+
   {
     text:"UNDER",
     direction:-1,
@@ -525,9 +525,65 @@ const firstWatermark = [
     direction:1,
     delay:0.075,
     speed:0.96
+  },
+
+  {
+    text:"PROCESS",
+    direction:-1,
+    delay:0.15,
+    speed:1.02
+  },
+
+  {
+    text:"UNDEFINED",
+    direction:1,
+    delay:0.15,
+    speed:0.92
   }
+
 ];
 
+
+/*
+  Second composition is kept for later.
+*/
+
+const secondWatermark = [
+
+  {
+    text:"OVER",
+    direction:-1,
+    delay:0.00,
+    speed:0.94
+  },
+
+  {
+    text:"UNDER",
+    direction:1,
+    delay:0.00,
+    speed:1.07
+  },
+
+  {
+    text:"DEFINED",
+    direction:-1,
+    delay:0.075,
+    speed:0.90
+  },
+
+  {
+    text:"UNDERSTOOD",
+    direction:1,
+    delay:0.075,
+    speed:1.03
+  }
+
+];
+
+
+/* =========================================
+   CREATE WATERMARK
+   ========================================= */
 
 function createWatermark(){
 
@@ -548,64 +604,100 @@ function createWatermark(){
     "scroll-watermark";
 
 
-  const cycle =
-    document.createElement("div");
+  const cycles = [
+    firstWatermark,
+    secondWatermark
+  ];
 
 
-  cycle.className =
-    "watermark-cycle";
+  cycles.forEach(
+    (cycle,cycleIndex)=>{
 
-
-  firstWatermark.forEach(
-    word => {
-
-      const line =
+      const cycleElement =
         document.createElement("div");
 
 
-      line.className =
-        "watermark-line";
+      cycleElement.className =
+        `watermark-cycle watermark-cycle-${cycleIndex}`;
 
 
-      const text =
-        document.createElement("div");
+      cycle.forEach(
+        (word,index)=>{
+
+          const line =
+            document.createElement("div");
 
 
-      text.className =
-        "watermark-word";
+          line.className =
+            "watermark-line";
 
 
-      text.textContent =
-        word.text;
+          /*
+            Six lines in the first
+            composition are distributed
+            vertically across the screen.
+          */
+
+          if(
+            cycleIndex === 0 &&
+            cycle.length === 6
+          ){
+
+            line.style.top =
+              `${3 + index * 16}vh`;
+
+          }
+
+          else{
+
+            line.style.top =
+              `${8 + index * 23}vh`;
+
+          }
 
 
-      text.dataset.direction =
-        word.direction;
+          const text =
+            document.createElement("div");
 
 
-      text.dataset.delay =
-        word.delay;
+          text.className =
+            "watermark-word";
 
 
-      text.dataset.speed =
-        word.speed;
+          text.textContent =
+            word.text;
 
 
-      line.appendChild(
-        text
+          text.dataset.direction =
+            word.direction;
+
+
+          text.dataset.delay =
+            word.delay;
+
+
+          text.dataset.speed =
+            word.speed;
+
+
+          line.appendChild(
+            text
+          );
+
+
+          cycleElement.appendChild(
+            line
+          );
+
+        }
       );
 
 
-      cycle.appendChild(
-        line
+      watermark.appendChild(
+        cycleElement
       );
 
     }
-  );
-
-
-  watermark.appendChild(
-    cycle
   );
 
 
@@ -638,6 +730,11 @@ function createWatermark(){
       position:absolute;
       inset:0;
 
+      opacity:0;
+    }
+
+
+    .watermark-cycle-0{
       opacity:1;
     }
 
@@ -649,7 +746,7 @@ function createWatermark(){
 
       width:100%;
 
-      height:25vh;
+      height:16vh;
 
       display:flex;
 
@@ -658,26 +755,6 @@ function createWatermark(){
       overflow:visible;
 
       perspective:1000px;
-    }
-
-
-    .watermark-line:nth-child(1){
-      top:8vh;
-    }
-
-
-    .watermark-line:nth-child(2){
-      top:31vh;
-    }
-
-
-    .watermark-line:nth-child(3){
-      top:54vh;
-    }
-
-
-    .watermark-line:nth-child(4){
-      top:77vh;
     }
 
 
@@ -693,9 +770,9 @@ function createWatermark(){
 
       font-size:
         clamp(
-          90px,
-          14vw,
-          240px
+          72px,
+          11vw,
+          190px
         );
 
       font-weight:800;
@@ -722,7 +799,12 @@ function createWatermark(){
     @media(max-width:900px){
 
       .watermark-word{
-        font-size:22vw;
+        font-size:18vw;
+      }
+
+
+      .watermark-line{
+        height:15vh;
       }
 
     }
@@ -737,8 +819,9 @@ function createWatermark(){
 }
 
 
-createWatermark();
-
+/* =========================================
+   WATERMARK MOTION
+   ========================================= */
 
 function updateWatermark(){
 
@@ -748,15 +831,15 @@ function updateWatermark(){
     );
 
 
-  const elements =
+  const cycles =
     document.querySelectorAll(
-      ".watermark-word"
+      ".watermark-cycle"
     );
 
 
   if(
     !watermark ||
-    !elements.length
+    !cycles.length
   ){
     return;
   }
@@ -782,195 +865,301 @@ function updateWatermark(){
 
 
   /*
-    Section 1 occupies the first
-    half of the page.
-
-    We intentionally stop the
-    watermark after this section.
+    First composition occupies
+    the first half of the page.
   */
 
-  const sectionProgress =
-    Math.min(
-      progress * 2,
-      1
+  let activeCycle;
+  let cycleProgress;
+
+
+  if(progress < .5){
+
+    activeCycle = 0;
+
+    cycleProgress =
+      progress * 2;
+
+  }
+
+  else{
+
+    activeCycle = 1;
+
+    cycleProgress =
+      (progress - .5) * 2;
+
+  }
+
+
+  /*
+    Smooth transition between
+    compositions.
+  */
+
+  const transitionZone =
+    .055;
+
+
+  if(
+    progress >
+      .5 - transitionZone &&
+    progress <
+      .5 + transitionZone
+  ){
+
+    const transitionProgress =
+      (
+        progress -
+        (.5 - transitionZone)
+      ) /
+      (transitionZone * 2);
+
+
+    cycles[0].style.opacity =
+      1 -
+      transitionProgress;
+
+
+    cycles[1].style.opacity =
+      transitionProgress;
+
+  }
+
+  else{
+
+    cycles.forEach(
+      (cycle,index)=>{
+
+        cycle.style.opacity =
+          index === activeCycle
+            ? 1
+            : 0;
+
+      }
     );
 
+  }
 
-  elements.forEach(
-    (element,index)=>{
 
-      const direction =
-        parseFloat(
-          element.dataset.direction
+  /*
+    Animate both compositions.
+  */
+
+  cycles.forEach(
+    (cycle,cycleIndex)=>{
+
+      const elements =
+        cycle.querySelectorAll(
+          ".watermark-word"
         );
 
 
-      const delay =
-        parseFloat(
-          element.dataset.delay
-        );
+      let localProgress;
 
 
-      const speed =
-        parseFloat(
-          element.dataset.speed
-        );
+      if(cycleIndex === 0){
+
+        localProgress =
+          Math.min(
+            Math.max(
+              progress * 2,
+              0
+            ),
+            1
+          );
+
+      }
+
+      else{
+
+        localProgress =
+          Math.min(
+            Math.max(
+              (progress - .5) * 2,
+              0
+            ),
+            1
+          );
+
+      }
 
 
-      /*
-        Delay the entrance of
-        CONSTRUCTION and DEFINED.
-      */
+      elements.forEach(
+        (element,index)=>{
 
-      const localProgress =
-        Math.min(
-          Math.max(
+          const direction =
+            parseFloat(
+              element.dataset.direction
+            );
+
+
+          const delay =
+            parseFloat(
+              element.dataset.delay ||
+              0
+            );
+
+
+          const speed =
+            parseFloat(
+              element.dataset.speed ||
+              1
+            );
+
+
+          /*
+            Later words enter later.
+          */
+
+          const delayedProgress =
+            Math.min(
+              Math.max(
+                (
+                  localProgress -
+                  delay
+                ) /
+                (1 - delay),
+                0
+              ),
+              1
+            );
+
+
+          /*
+            Individual speed variation.
+          */
+
+          const individualProgress =
+            Math.min(
+              Math.max(
+                delayedProgress *
+                speed,
+                0
+              ),
+              1
+            );
+
+
+          const travel =
+            window.innerWidth *
+            1.45;
+
+
+          /*
+            Right → left
+          */
+
+          const start =
+            direction === -1
+              ? window.innerWidth + 120
+              : -travel - 120;
+
+
+          /*
+            Left → right
+          */
+
+          const end =
+            direction === -1
+              ? -travel - 120
+              : window.innerWidth + 120;
+
+
+          const x =
+            start +
             (
-              sectionProgress -
-              delay
-            ) /
-            (1 - delay),
-            0
-          ),
-          1
-        );
+              end -
+              start
+            ) *
+            individualProgress;
 
 
-      /*
-        Give each line its own
-        travel distance.
-      */
+          /*
+            Slight vertical movement.
+          */
 
-      const travel =
-        window.innerWidth *
-        1.45;
-
-
-      /*
-        Right → left:
-        UNDER
-        CONSTRUCTION
-
-        Left → right:
-        OVER
-        DEFINED
-      */
-
-      const start =
-        direction === -1
-          ? window.innerWidth + 120
-          : -travel - 120;
+          const y =
+            Math.sin(
+              individualProgress *
+              Math.PI *
+              2 +
+              index
+            ) *
+            24;
 
 
-      const end =
-        direction === -1
-          ? -travel - 120
-          : window.innerWidth + 120;
+          /*
+            Subtle 3D rotation.
+          */
+
+          const rotationY =
+            Math.sin(
+              individualProgress *
+              Math.PI *
+              2
+            ) *
+            22;
 
 
-      /*
-        Different speeds for lines
-        travelling in the same direction.
-      */
-
-      const individualProgress =
-        Math.min(
-          Math.max(
-            localProgress *
-            speed,
-            0
-          ),
-          1
-        );
+          const scale =
+            1 +
+            Math.sin(
+              individualProgress *
+              Math.PI *
+              2 +
+              index
+            ) *
+            .025;
 
 
-      const x =
-        start +
-        (
-          end -
-          start
-        ) *
-        individualProgress;
+          element.style.transform =
+            `
+            translate3d(
+              ${x}px,
+              ${y}px,
+              0
+            )
+            rotateY(${rotationY}deg)
+            scale(${scale})
+            `;
 
-
-      /*
-        Subtle vertical movement.
-      */
-
-      const y =
-        Math.sin(
-          individualProgress *
-          Math.PI *
-          2 +
-          index
-        ) *
-        24;
-
-
-      /*
-        Slight 3D rotation.
-      */
-
-      const rotationY =
-        Math.sin(
-          individualProgress *
-          Math.PI *
-          2
-        ) *
-        22;
-
-
-      const scale =
-        1 +
-        Math.sin(
-          individualProgress *
-          Math.PI *
-          2 +
-          index
-        ) *
-        .025;
-
-
-      element.style.transform =
-        `
-        translate3d(
-          ${x}px,
-          ${y}px,
-          0
-        )
-        rotateY(${rotationY}deg)
-        scale(${scale})
-        `;
+        }
+      );
 
     }
   );
 
 
   /*
-    Fade the first composition out
-    smoothly as the first half ends.
+    Fade out at the absolute
+    bottom of the page.
   */
 
-  let opacity = 1;
+  if(progress > .94){
 
-
-  if(sectionProgress > .88){
-
-    opacity =
+    const fade =
       1 -
       (
-        (sectionProgress - .88) /
-        .12
+        (progress - .94) /
+        .06
+      );
+
+
+    watermark.style.opacity =
+      Math.max(
+        fade,
+        0
       );
 
   }
 
+  else{
 
-  watermark.style.opacity =
-    Math.max(
-      opacity,
-      0
-    );
+    watermark.style.opacity =
+      1;
+
+  }
 
 }
 
@@ -1017,6 +1206,7 @@ if(
   let mouseX =
     window.innerWidth / 2;
 
+
   let mouseY =
     window.innerHeight / 2;
 
@@ -1024,12 +1214,14 @@ if(
   let cursorX =
     mouseX;
 
+
   let cursorY =
     mouseY;
 
 
   let previousX =
     cursorX;
+
 
   let previousY =
     cursorY;
@@ -1041,6 +1233,7 @@ if(
 
       mouseX =
         event.clientX;
+
 
       mouseY =
         event.clientY;
@@ -1116,6 +1309,7 @@ if(
 
     previousX =
       cursorX;
+
 
     previousY =
       cursorY;
@@ -1193,5 +1387,8 @@ if(
    START
    ========================================= */
 
+createWatermark();
+
 loadGallery();
+
 updatePage();
