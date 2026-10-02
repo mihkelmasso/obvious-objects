@@ -496,6 +496,26 @@ function updateGallery(){
 
 /* =========================================
    WATERMARK SECTIONS
+   =========================================
+
+   SECTION 1
+   RIGHT → LEFT
+
+   UNDER
+   CONSTRUCTION
+
+
+   SECTION 2
+   LEFT → RIGHT
+
+   OVER
+   DEFINED
+
+
+   SECTION 3
+   RIGHT → LEFT
+
+   CONTACT
    ========================================= */
 
 const watermarkSections = [
@@ -505,39 +525,41 @@ const watermarkSections = [
       text:"UNDER",
       direction:-1,
       delay:0,
-      speed:1.00
+      speed:0.58
     },
 
     {
       text:"CONSTRUCTION",
       direction:-1,
-      delay:0.08,
-      speed:1.06
+      delay:0.12,
+      speed:0.62
     }
   ],
+
 
   [
     {
       text:"OVER",
       direction:1,
       delay:0,
-      speed:0.94
+      speed:0.56
     },
 
     {
       text:"DEFINED",
       direction:1,
-      delay:0.08,
-      speed:1.03
+      delay:0.12,
+      speed:0.60
     }
   ],
+
 
   [
     {
       text:"CONTACT",
       direction:-1,
       delay:0,
-      speed:1.00
+      speed:0.46
     }
   ]
 
@@ -690,12 +712,18 @@ function createWatermark(){
 
 
     .watermark-line:nth-child(1){
-      top:16vh;
+      top:15vh;
     }
 
 
     .watermark-line:nth-child(2){
-      top:54vh;
+      top:53vh;
+    }
+
+
+    .watermark-section-2
+    .watermark-line:nth-child(1){
+      top:15vh;
     }
 
 
@@ -803,6 +831,15 @@ function updateWatermark(){
     );
 
 
+  /*
+    Three equal sections across
+    the entire page.
+
+    0.00 → 0.333
+    0.333 → 0.666
+    0.666 → 1.00
+  */
+
   const sectionCount =
     sections.length;
 
@@ -836,7 +873,7 @@ function updateWatermark(){
 
 
   /*
-    Smooth transition between sections.
+    Smooth handover between sections.
   */
 
   const transitionZone =
@@ -850,7 +887,9 @@ function updateWatermark(){
 
 
       if(index === sectionIndex){
+
         opacity = 1;
+
       }
 
 
@@ -900,8 +939,7 @@ function updateWatermark(){
 
 
   /*
-    Animate every section according
-    to its own local scroll progress.
+    Animate each section.
   */
 
   sections.forEach(
@@ -952,7 +990,7 @@ function updateWatermark(){
 
 
           /*
-            Upper word always enters first.
+            Upper line enters first.
           */
 
           const delayedProgress =
@@ -969,6 +1007,11 @@ function updateWatermark(){
             );
 
 
+          /*
+            Slower movement so the words
+            remain visible longer.
+          */
+
           const individualProgress =
             Math.min(
               Math.max(
@@ -978,6 +1021,90 @@ function updateWatermark(){
               ),
               1
             );
+
+
+          /*
+            CONTACT is different:
+            it enters from the right and
+            settles in the upper-right
+            when the contact area is reached.
+          */
+
+          if(
+            sectionNumber === 2
+          ){
+
+            const enterProgress =
+              Math.min(
+                individualProgress /
+                0.62,
+                1
+              );
+
+
+            const startX =
+              window.innerWidth +
+              120;
+
+
+            const targetX =
+              window.innerWidth -
+              Math.min(
+                window.innerWidth * .10,
+                180
+              );
+
+
+            const x =
+              startX +
+              (
+                targetX -
+                startX
+              ) *
+              enterProgress;
+
+
+            const y =
+              15;
+
+
+            const rotationY =
+              Math.sin(
+                enterProgress *
+                Math.PI
+              ) *
+              12;
+
+
+            const scale =
+              1 +
+              Math.sin(
+                enterProgress *
+                Math.PI
+              ) *
+              .025;
+
+
+            element.style.transform =
+              `
+              translate3d(
+                ${x}px,
+                ${y}px,
+                0
+              )
+              translateX(-100%)
+              rotateY(${rotationY}deg)
+              scale(${scale})
+              `;
+
+
+            element.style.opacity =
+              1;
+
+
+            return;
+
+          }
 
 
           const travel =
@@ -1047,6 +1174,10 @@ function updateWatermark(){
             scale(${scale})
             `;
 
+
+          element.style.opacity =
+            1;
+
         }
       );
 
@@ -1055,25 +1186,17 @@ function updateWatermark(){
 
 
   /*
-    Fade the watermark out at the
-    absolute end of the page.
+    Keep CONTACT visible through the
+    end of the page, where the form is.
   */
 
-  if(progress > .94){
-
-    const fade =
-      1 -
-      (
-        (progress - .94) /
-        .06
-      );
-
+  if(
+    sectionIndex === 2 &&
+    sectionProgress > .62
+  ){
 
     watermark.style.opacity =
-      Math.max(
-        fade,
-        0
-      );
+      1;
 
   }
 
@@ -1311,4 +1434,5 @@ if(
    ========================================= */
 
 loadGallery();
+
 updatePage();
