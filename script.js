@@ -34,27 +34,28 @@ async function loadGallery(){
     const files =
       await response.json();
 
-const imageFiles =
-  files.filter(file => {
-    return file.type === "file" &&
-      /\.(jpg|jpeg|png|webp|avif)$/i.test(file.name);
-  });
+    const imageFiles =
+      files.filter(file => {
+        return file.type === "file" &&
+          /\.(jpg|jpeg|png|webp|avif)$/i.test(file.name);
+      });
 
-for(let i = imageFiles.length - 1; i > 0; i--){
+    for(let i = imageFiles.length - 1; i > 0; i--){
 
-  const j =
-    Math.floor(
-      Math.random() * (i + 1)
-    );
+      const j =
+        Math.floor(
+          Math.random() * (i + 1)
+        );
 
-  [
-    imageFiles[i],
-    imageFiles[j]
-  ] = [
-    imageFiles[j],
-    imageFiles[i]
-  ];
-}
+      [
+        imageFiles[i],
+        imageFiles[j]
+      ] = [
+        imageFiles[j],
+        imageFiles[i]
+      ];
+    }
+
     gallery
       .querySelectorAll(".tile")
       .forEach(tile => tile.remove());
@@ -417,13 +418,15 @@ function updateGallery(){
       )
       scale(${scale})
       rotate(${rotate}deg)`;
+
   });
+
 }
 
 
 /* =========================================
    WATERMARK
-   TWO DIFFERENT HALVES
+   TWO DIFFERENT COMPOSITIONS
    ========================================= */
 
 const watermarkCycles = [
@@ -577,14 +580,12 @@ function createWatermark(){
     .watermark-cycle{
       position:absolute;
       inset:0;
+      opacity:0;
+      transition:opacity .8s ease;
     }
 
     .watermark-cycle-0{
       opacity:1;
-    }
-
-    .watermark-cycle-1{
-      opacity:0;
     }
 
     .watermark-line{
@@ -719,16 +720,13 @@ function updateWatermark(){
 
 
   /*
-    First composition:
-    first half of page.
-
-    Second composition:
-    second half of page.
+    Each composition occupies
+    exactly one half of the page.
   */
 
   let activeCycle;
-
   let cycleProgress;
+
 
   if(progress < .5){
 
@@ -749,154 +747,230 @@ function updateWatermark(){
   }
 
 
+  /*
+    Smooth crossfade around the
+    halfway point.
+
+    The first composition fades
+    out while the second fades in.
+  */
+
+  const transitionZone = .055;
+
+
+  if(
+    progress > .5 - transitionZone &&
+    progress < .5 + transitionZone
+  ){
+
+    const transitionProgress =
+      (
+        progress -
+        (.5 - transitionZone)
+      ) /
+      (transitionZone * 2);
+
+
+    cycles[0].style.opacity =
+      1 - transitionProgress;
+
+
+    cycles[1].style.opacity =
+      transitionProgress;
+
+  }
+
+  else{
+
+    cycles.forEach(
+      (cycle,index)=>{
+
+        cycle.style.opacity =
+          index === activeCycle
+            ? 1
+            : 0;
+
+      }
+    );
+
+  }
+
+
+  /*
+    Animate the currently relevant
+    composition.
+  */
+
   cycles.forEach(
-    (cycle,index)=>{
+    (cycle,cycleIndex)=>{
 
-      cycle.style.opacity =
-        index === activeCycle
-          ? 1
-          : 0;
-
-    }
-  );
+      const elements =
+        cycle.querySelectorAll(
+          ".watermark-word"
+        );
 
 
-  const activeElements =
-    cycles[activeCycle]
-      .querySelectorAll(
-        ".watermark-word"
+      /*
+        During the transition both
+        compositions remain animated.
+      */
+
+      let localProgress;
+
+
+      if(cycleIndex === 0){
+
+        localProgress =
+          Math.min(
+            Math.max(
+              progress * 2,
+              0
+            ),
+            1
+          );
+
+      }
+
+      else{
+
+        localProgress =
+          Math.min(
+            Math.max(
+              (progress - .5) * 2,
+              0
+            ),
+            1
+          );
+
+      }
+
+
+      elements.forEach(
+        (element,index)=>{
+
+          const direction =
+            parseFloat(
+              element.dataset.direction
+            );
+
+
+          const speed =
+            parseFloat(
+              element.dataset.speed || 1
+            );
+
+
+          const isLead =
+            element.dataset.lead === "true";
+
+
+          /*
+            Lead words UNDER and OVER
+            travel slightly ahead of the
+            lower word in their pair.
+          */
+
+          const leadOffset =
+            isLead
+              ? direction === -1
+                ? .12
+                : -.12
+              : 0;
+
+
+          /*
+            Same-direction lines have
+            slightly different speeds.
+          */
+
+          const individualProgress =
+            Math.min(
+              Math.max(
+                localProgress *
+                speed +
+                index * .018 +
+                leadOffset,
+                0
+              ),
+              1
+            );
+
+
+          const travel =
+            window.innerWidth * 1.45;
+
+
+          const start =
+            direction === -1
+              ? window.innerWidth + 120
+              : -travel - 120;
+
+
+          const end =
+            direction === -1
+              ? -travel - 120
+              : window.innerWidth + 120;
+
+
+          const x =
+            start +
+            (
+              end - start
+            ) *
+            individualProgress;
+
+
+          const y =
+            Math.sin(
+              individualProgress *
+              Math.PI *
+              2 +
+              index
+            ) *
+            24;
+
+
+          const rotationY =
+            Math.sin(
+              individualProgress *
+              Math.PI *
+              2
+            ) *
+            22;
+
+
+          const scale =
+            1 +
+            Math.sin(
+              individualProgress *
+              Math.PI *
+              2 +
+              index
+            ) *
+            .025;
+
+
+          element.style.transform =
+            `
+            translate3d(
+              ${x}px,
+              ${y}px,
+              0
+            )
+            rotateY(${rotationY}deg)
+            scale(${scale})
+            `;
+
+        }
       );
-
-
-  activeElements.forEach(
-    (element,index)=>{
-
-      const direction =
-        parseFloat(
-          element.dataset.direction
-        );
-
-      const speed =
-        parseFloat(
-          element.dataset.speed || 1
-        );
-
-      const isLead =
-        element.dataset.lead === "true";
-
-
-      /*
-        The lead word of each
-        travelling pair gets a
-        slight positional advantage
-        in the direction of travel.
-
-        Right → left:
-        lead starts further right.
-
-        Left → right:
-        lead starts further left.
-      */
-
-      const leadOffset =
-        isLead
-          ? direction === -1
-            ? 0.12
-            : -0.12
-          : 0;
-
-
-      /*
-        Slightly different speed for
-        lines travelling in the same
-        direction.
-      */
-
-      const individualProgress =
-        Math.min(
-          Math.max(
-            cycleProgress * speed +
-            index * .018 +
-            leadOffset,
-            0
-          ),
-          1
-        );
-
-
-      const travel =
-        window.innerWidth *
-        1.45;
-
-
-      const start =
-        direction === -1
-          ? window.innerWidth + 120
-          : -travel - 120;
-
-
-      const end =
-        direction === -1
-          ? -travel - 120
-          : window.innerWidth + 120;
-
-
-      const x =
-        start +
-        (
-          end - start
-        ) *
-        individualProgress;
-
-
-      const y =
-        Math.sin(
-          individualProgress *
-          Math.PI *
-          2 +
-          index
-        ) *
-        24;
-
-
-      const rotationY =
-        Math.sin(
-          individualProgress *
-          Math.PI *
-          2
-        ) *
-        22;
-
-
-      const scale =
-        1 +
-        Math.sin(
-          individualProgress *
-          Math.PI *
-          2 +
-          index
-        ) *
-        .025;
-
-
-      element.style.transform =
-        `
-        translate3d(
-          ${x}px,
-          ${y}px,
-          0
-        )
-        rotateY(${rotationY}deg)
-        scale(${scale})
-        `;
 
     }
   );
 
 
   /*
-    Fade everything out at the
-    absolute end of the page.
+    Everything disappears smoothly
+    at the very bottom.
   */
 
   if(progress > .94){
@@ -943,6 +1017,7 @@ window.addEventListener(
   updatePage,
   {passive:true}
 );
+
 
 window.addEventListener(
   "resize",
@@ -1017,6 +1092,7 @@ if(
       cursorX -
       previousX;
 
+
     const dy =
       cursorY -
       previousY;
@@ -1038,6 +1114,7 @@ if(
 
     cursor.style.left =
       cursorX + "px";
+
 
     cursor.style.top =
       cursorY + "px";
