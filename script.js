@@ -59,14 +59,14 @@ async function loadGallery(){
     }
 
 
-    /* Remove hard-coded gallery tiles */
+    /* Remove existing tiles */
 
     gallery
       .querySelectorAll(".tile")
       .forEach(tile => tile.remove());
 
 
-    /* Create gallery tiles */
+    /* Create tiles */
 
     imageFiles.forEach((file,index) => {
 
@@ -494,105 +494,130 @@ function updateGallery(){
 
 
 /* =========================================
-   WATERMARK COMPOSITIONS
+   FIRST WATERMARK
+   THREE ROWS
    ========================================= */
 
 /*
-   FIRST HALF:
+   ROW 1:
+   UNDER       OVER
 
-   UNDER
-   OVER
-   CONSTRUCTION
-   DEFINED
-   PROCESS
-   UNDEFINED
+   ROW 2:
+   CONSTRUCTION       DEFINED
+
+   ROW 3:
+   PROCESS       UNDEFINED
 */
 
 const firstWatermark = [
 
-  {
-    text:"UNDER",
-    direction:-1,
-    delay:0.00,
-    speed:1.00
-  },
+  [
+    {
+      text:"UNDER",
+      direction:-1,
+      delay:0.00,
+      speed:1.00
+    },
 
-  {
-    text:"OVER",
-    direction:1,
-    delay:0.00,
-    speed:0.90
-  },
+    {
+      text:"OVER",
+      direction:1,
+      delay:0.00,
+      speed:0.90
+    }
+  ],
 
-  {
-    text:"CONSTRUCTION",
-    direction:-1,
-    delay:0.075,
-    speed:1.06
-  },
 
-  {
-    text:"DEFINED",
-    direction:1,
-    delay:0.075,
-    speed:0.96
-  },
+  [
+    {
+      text:"CONSTRUCTION",
+      direction:-1,
+      delay:0.075,
+      speed:1.06
+    },
 
-  {
-    text:"PROCESS",
-    direction:-1,
-    delay:0.15,
-    speed:1.02
-  },
+    {
+      text:"DEFINED",
+      direction:1,
+      delay:0.075,
+      speed:0.96
+    }
+  ],
 
-  {
-    text:"UNDEFINED",
-    direction:1,
-    delay:0.15,
-    speed:0.92
-  }
+
+  [
+    {
+      text:"PROCESS",
+      direction:-1,
+      delay:0.15,
+      speed:1.02
+    },
+
+    {
+      text:"UNDEFINED",
+      direction:1,
+      delay:0.15,
+      speed:0.92
+    }
+  ]
 
 ];
 
 
 /*
-   SECOND HALF:
-
-   empty
-   UNDER
-   empty
-   STOOD
+   SECOND COMPOSITION — LEFT
+   FOR LATER DEVELOPMENT.
 */
 
 const secondWatermark = [
 
-  {
-    text:"",
-    direction:-1,
-    delay:0.00,
-    speed:1.00
-  },
+  [
+    {
+      text:"",
+      direction:-1,
+      delay:0.00,
+      speed:1.00
+    },
 
-  {
-    text:"UNDER",
-    direction:1,
-    delay:0.00,
-    speed:0.94
-  },
+    {
+      text:"",
+      direction:1,
+      delay:0.00,
+      speed:1.00
+    }
+  ],
 
-  {
-    text:"",
-    direction:-1,
-    delay:0.075,
-    speed:1.04
-  },
+  [
+    {
+      text:"",
+      direction:-1,
+      delay:0.075,
+      speed:1.00
+    },
 
-  {
-    text:"STOOD",
-    direction:1,
-    delay:0.075,
-    speed:0.98
-  }
+    {
+      text:"",
+      direction:1,
+      delay:0.075,
+      speed:1.00
+    }
+  ],
+
+  [
+    {
+      text:"",
+      direction:-1,
+      delay:0.15,
+      speed:1.00
+    },
+
+    {
+      text:"",
+      direction:1,
+      delay:0.15,
+      speed:1.00
+    }
+  ]
 
 ];
 
@@ -638,7 +663,7 @@ function createWatermark(){
 
 
       cycle.forEach(
-        (word,index)=>{
+        (row,rowIndex)=>{
 
           const line =
             document.createElement("div");
@@ -648,50 +673,42 @@ function createWatermark(){
             "watermark-line";
 
 
-          if(
-            cycleIndex === 0 &&
-            cycle.length === 6
-          ){
-
-            line.style.top =
-              `${3 + index * 16}vh`;
-
-          }
-
-          else{
-
-            line.style.top =
-              `${8 + index * 23}vh`;
-
-          }
+          line.style.top =
+            `${8 + rowIndex * 30}vh`;
 
 
-          const text =
-            document.createElement("div");
+          row.forEach(
+            word=>{
+
+              const text =
+                document.createElement("div");
 
 
-          text.className =
-            "watermark-word";
+              text.className =
+                "watermark-word";
 
 
-          text.textContent =
-            word.text;
+              text.textContent =
+                word.text;
 
 
-          text.dataset.direction =
-            word.direction;
+              text.dataset.direction =
+                word.direction;
 
 
-          text.dataset.delay =
-            word.delay;
+              text.dataset.delay =
+                word.delay;
 
 
-          text.dataset.speed =
-            word.speed;
+              text.dataset.speed =
+                word.speed;
 
 
-          line.appendChild(
-            text
+              line.appendChild(
+                text
+              );
+
+            }
           );
 
 
@@ -756,7 +773,7 @@ function createWatermark(){
 
       width:100%;
 
-      height:16vh;
+      height:24vh;
 
       display:flex;
 
@@ -812,10 +829,6 @@ function createWatermark(){
         font-size:18vw;
       }
 
-      .watermark-line{
-        height:15vh;
-      }
-
     }
 
   `;
@@ -826,6 +839,9 @@ function createWatermark(){
   );
 
 }
+
+
+createWatermark();
 
 
 /* =========================================
@@ -875,13 +891,14 @@ function updateWatermark(){
 
   /*
     First composition:
-    0 → 50%
+    first half of page.
 
     Second composition:
-    50 → 100%
+    second half.
   */
 
   let activeCycle;
+
   let cycleProgress;
 
 
@@ -905,8 +922,7 @@ function updateWatermark(){
 
 
   /*
-    Smooth transition at the
-    halfway point.
+    Smooth transition.
   */
 
   const transitionZone =
@@ -955,16 +971,15 @@ function updateWatermark(){
 
 
   /*
-    Animate both compositions so
-    the transition remains continuous.
+    Animate both compositions.
   */
 
   cycles.forEach(
     (cycle,cycleIndex)=>{
 
-      const elements =
+      const lines =
         cycle.querySelectorAll(
-          ".watermark-word"
+          ".watermark-line"
         );
 
 
@@ -998,163 +1013,158 @@ function updateWatermark(){
       }
 
 
-      elements.forEach(
-        (element,index)=>{
+      lines.forEach(
+        (line,rowIndex)=>{
 
-          const direction =
-            parseFloat(
-              element.dataset.direction
+          const elements =
+            line.querySelectorAll(
+              ".watermark-word"
             );
 
 
-          const delay =
-            parseFloat(
-              element.dataset.delay ||
-              0
-            );
+          elements.forEach(
+            (element,index)=>{
+
+              const direction =
+                parseFloat(
+                  element.dataset.direction
+                );
 
 
-          const speed =
-            parseFloat(
-              element.dataset.speed ||
-              1
-            );
+              const delay =
+                parseFloat(
+                  element.dataset.delay ||
+                  0
+                );
 
 
-          /*
-            Empty rows remain invisible,
-            but preserve their movement slot.
-          */
-
-          if(
-            !element.textContent.trim()
-          ){
-
-            element.style.opacity = 0;
-
-            return;
-
-          }
+              const speed =
+                parseFloat(
+                  element.dataset.speed ||
+                  1
+                );
 
 
-          element.style.opacity = 1;
+              if(
+                !element.textContent.trim()
+              ){
+
+                element.style.opacity =
+                  0;
+
+                return;
+
+              }
 
 
-          /*
-            Later words enter slightly later.
-          */
+              element.style.opacity =
+                1;
 
-          const delayedProgress =
-            Math.min(
-              Math.max(
+
+              /*
+                Delayed entrance for the
+                second word of each pair.
+              */
+
+              const delayedProgress =
+                Math.min(
+                  Math.max(
+                    (
+                      localProgress -
+                      delay
+                    ) /
+                    (1 - delay),
+                    0
+                  ),
+                  1
+                );
+
+
+              /*
+                Slightly different speed
+                for each travelling line.
+              */
+
+              const individualProgress =
+                Math.min(
+                  Math.max(
+                    delayedProgress *
+                    speed,
+                    0
+                  ),
+                  1
+                );
+
+
+              const travel =
+                window.innerWidth *
+                1.45;
+
+
+              const start =
+                direction === -1
+                  ? window.innerWidth + 120
+                  : -travel - 120;
+
+
+              const end =
+                direction === -1
+                  ? -travel - 120
+                  : window.innerWidth + 120;
+
+
+              const x =
+                start +
                 (
-                  localProgress -
-                  delay
-                ) /
-                (1 - delay),
-                0
-              ),
-              1
-            );
+                  end -
+                  start
+                ) *
+                individualProgress;
 
 
-          /*
-            Different speeds for each line.
-          */
-
-          const individualProgress =
-            Math.min(
-              Math.max(
-                delayedProgress *
-                speed,
-                0
-              ),
-              1
-            );
+              const y =
+                Math.sin(
+                  individualProgress *
+                  Math.PI *
+                  2 +
+                  rowIndex
+                ) *
+                24;
 
 
-          const travel =
-            window.innerWidth *
-            1.45;
+              const rotationY =
+                Math.sin(
+                  individualProgress *
+                  Math.PI *
+                  2
+                ) *
+                22;
 
 
-          /*
-            Right → left.
-          */
-
-          const start =
-            direction === -1
-              ? window.innerWidth + 120
-              : -travel - 120;
-
-
-          /*
-            Left → right.
-          */
-
-          const end =
-            direction === -1
-              ? -travel - 120
-              : window.innerWidth + 120;
+              const scale =
+                1 +
+                Math.sin(
+                  individualProgress *
+                  Math.PI *
+                  2 +
+                  rowIndex
+                ) *
+                .025;
 
 
-          const x =
-            start +
-            (
-              end -
-              start
-            ) *
-            individualProgress;
+              element.style.transform =
+                `
+                translate3d(
+                  ${x}px,
+                  ${y}px,
+                  0
+                )
+                rotateY(${rotationY}deg)
+                scale(${scale})
+                `;
 
-
-          /*
-            Slight vertical movement.
-          */
-
-          const y =
-            Math.sin(
-              individualProgress *
-              Math.PI *
-              2 +
-              index
-            ) *
-            24;
-
-
-          /*
-            Subtle 3D rotation.
-          */
-
-          const rotationY =
-            Math.sin(
-              individualProgress *
-              Math.PI *
-              2
-            ) *
-            22;
-
-
-          const scale =
-            1 +
-            Math.sin(
-              individualProgress *
-              Math.PI *
-              2 +
-              index
-            ) *
-            .025;
-
-
-          element.style.transform =
-            `
-            translate3d(
-              ${x}px,
-              ${y}px,
-              0
-            )
-            rotateY(${rotationY}deg)
-            scale(${scale})
-            `;
+            }
+          );
 
         }
       );
@@ -1164,8 +1174,8 @@ function updateWatermark(){
 
 
   /*
-    Fade the complete watermark
-    away at the very bottom.
+    Fade watermark away at the
+    absolute bottom.
   */
 
   if(progress > .94){
