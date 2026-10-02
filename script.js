@@ -494,8 +494,19 @@ function updateGallery(){
 
 
 /* =========================================
-   FIRST WATERMARK COMPOSITION
+   WATERMARK COMPOSITIONS
    ========================================= */
+
+/*
+   FIRST HALF:
+
+   UNDER
+   OVER
+   CONSTRUCTION
+   DEFINED
+   PROCESS
+   UNDEFINED
+*/
 
 const firstWatermark = [
 
@@ -545,39 +556,50 @@ const firstWatermark = [
 
 
 /*
-  Second composition is kept for later.
+   SECOND HALF:
+
+   empty
+   UNDER
+   empty
+   STOOD
 */
 
 const secondWatermark = [
 
   {
-    text:"OVER",
+    text:"",
     direction:-1,
     delay:0.00,
-    speed:0.94
+    speed:1.00
   },
 
   {
     text:"UNDER",
     direction:1,
     delay:0.00,
-    speed:1.07
+    speed:0.94
   },
 
   {
-    text:"DEFINED",
+    text:"",
     direction:-1,
     delay:0.075,
-    speed:0.90
+    speed:1.04
   },
 
   {
-    text:"UNDERSTOOD",
+    text:"STOOD",
     direction:1,
     delay:0.075,
-    speed:1.03
+    speed:0.98
   }
 
+];
+
+
+const watermarkCycles = [
+  firstWatermark,
+  secondWatermark
 ];
 
 
@@ -604,13 +626,7 @@ function createWatermark(){
     "scroll-watermark";
 
 
-  const cycles = [
-    firstWatermark,
-    secondWatermark
-  ];
-
-
-  cycles.forEach(
+  watermarkCycles.forEach(
     (cycle,cycleIndex)=>{
 
       const cycleElement =
@@ -631,12 +647,6 @@ function createWatermark(){
           line.className =
             "watermark-line";
 
-
-          /*
-            Six lines in the first
-            composition are distributed
-            vertically across the screen.
-          */
 
           if(
             cycleIndex === 0 &&
@@ -802,7 +812,6 @@ function createWatermark(){
         font-size:18vw;
       }
 
-
       .watermark-line{
         height:15vh;
       }
@@ -865,8 +874,11 @@ function updateWatermark(){
 
 
   /*
-    First composition occupies
-    the first half of the page.
+    First composition:
+    0 → 50%
+
+    Second composition:
+    50 → 100%
   */
 
   let activeCycle;
@@ -893,8 +905,8 @@ function updateWatermark(){
 
 
   /*
-    Smooth transition between
-    compositions.
+    Smooth transition at the
+    halfway point.
   */
 
   const transitionZone =
@@ -943,7 +955,8 @@ function updateWatermark(){
 
 
   /*
-    Animate both compositions.
+    Animate both compositions so
+    the transition remains continuous.
   */
 
   cycles.forEach(
@@ -1009,7 +1022,26 @@ function updateWatermark(){
 
 
           /*
-            Later words enter later.
+            Empty rows remain invisible,
+            but preserve their movement slot.
+          */
+
+          if(
+            !element.textContent.trim()
+          ){
+
+            element.style.opacity = 0;
+
+            return;
+
+          }
+
+
+          element.style.opacity = 1;
+
+
+          /*
+            Later words enter slightly later.
           */
 
           const delayedProgress =
@@ -1027,7 +1059,7 @@ function updateWatermark(){
 
 
           /*
-            Individual speed variation.
+            Different speeds for each line.
           */
 
           const individualProgress =
@@ -1047,7 +1079,7 @@ function updateWatermark(){
 
 
           /*
-            Right → left
+            Right → left.
           */
 
           const start =
@@ -1057,7 +1089,7 @@ function updateWatermark(){
 
 
           /*
-            Left → right
+            Left → right.
           */
 
           const end =
@@ -1132,8 +1164,8 @@ function updateWatermark(){
 
 
   /*
-    Fade out at the absolute
-    bottom of the page.
+    Fade the complete watermark
+    away at the very bottom.
   */
 
   if(progress > .94){
