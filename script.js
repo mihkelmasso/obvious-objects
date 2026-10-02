@@ -3,11 +3,6 @@ const footer = document.querySelector("footer");
 const gallery = document.querySelector(".gallery");
 const cursor = document.querySelector(".cursor");
 
-
-/* =========================================
-   AUTOMATIC GALLERY
-   ========================================= */
-
 const GALLERY_API =
   "https://api.github.com/repos/mihkelmasso/obvious-objects/contents/images/gallery";
 
@@ -426,7 +421,8 @@ function updateGallery(){
 
 /* =========================================
    WATERMARK
-   TWO DIFFERENT COMPOSITIONS
+   FIRST COMPOSITION
+   UNDER / OVER / CONSTRUCTION / DEFINED
    ========================================= */
 
 const watermarkCycles = [
@@ -441,25 +437,31 @@ const watermarkCycles = [
 
     {
       text:"OVER",
-      direction:1,
+      direction:-1,
       speed:0.88,
       lead:true
     },
 
     {
       text:"CONSTRUCTION",
-      direction:-1,
+      direction:1,
       speed:1.08,
       lead:false
     },
 
     {
-      text:"WHELMING",
+      text:"DEFINED",
       direction:1,
       speed:0.94,
       lead:false
     }
   ],
+
+
+  /*
+    Second composition remains
+    unchanged for now.
+  */
 
   [
     {
@@ -484,7 +486,7 @@ const watermarkCycles = [
     },
 
     {
-      text:"WHELMING",
+      text:"UNDERSTOOD",
       direction:1,
       speed:1.03,
       lead:false
@@ -510,97 +512,123 @@ function createWatermark(){
   watermark.className =
     "scroll-watermark";
 
+
   watermarkCycles
-    .forEach((cycle,cycleIndex)=>{
+    .forEach(
+      (cycle,cycleIndex)=>{
 
-      const cycleElement =
-        document.createElement("div");
-
-      cycleElement.className =
-        `watermark-cycle watermark-cycle-${cycleIndex}`;
-
-      cycle.forEach((word)=>{
-
-        const line =
+        const cycleElement =
           document.createElement("div");
 
-        line.className =
-          "watermark-line";
+        cycleElement.className =
+          `watermark-cycle watermark-cycle-${cycleIndex}`;
 
-        const text =
-          document.createElement("div");
 
-        text.className =
-          "watermark-word";
+        cycle.forEach(
+          (word)=>{
 
-        text.textContent =
-          word.text;
+            const line =
+              document.createElement("div");
 
-        text.dataset.direction =
-          word.direction;
+            line.className =
+              "watermark-line";
 
-        text.dataset.speed =
-          word.speed;
 
-        text.dataset.lead =
-          word.lead;
+            const text =
+              document.createElement("div");
 
-        line.appendChild(text);
+            text.className =
+              "watermark-word";
 
-        cycleElement.appendChild(
-          line
+
+            text.textContent =
+              word.text;
+
+
+            text.dataset.direction =
+              word.direction;
+
+
+            text.dataset.speed =
+              word.speed;
+
+
+            text.dataset.lead =
+              word.lead;
+
+
+            line.appendChild(text);
+
+            cycleElement.appendChild(line);
+
+          }
         );
 
-      });
 
-      watermark.appendChild(
-        cycleElement
-      );
+        watermark.appendChild(
+          cycleElement
+        );
 
-    });
+      }
+    );
+
 
   document.body.appendChild(
     watermark
   );
 
+
   const style =
     document.createElement("style");
+
 
   style.textContent = `
 
     .scroll-watermark{
       position:fixed;
       inset:0;
+
       z-index:20;
+
       pointer-events:none;
+
       overflow:hidden;
+
       opacity:1;
     }
+
 
     .watermark-cycle{
       position:absolute;
       inset:0;
+
       opacity:0;
-      transition:opacity .8s ease;
     }
+
 
     .watermark-cycle-0{
       opacity:1;
     }
 
+
     .watermark-line{
       position:absolute;
+
       left:0;
+
       width:100%;
+
       height:25vh;
 
       display:flex;
+
       align-items:center;
 
       overflow:visible;
 
       perspective:1000px;
     }
+
 
     .watermark-cycle-0
     .watermark-line:nth-child(1),
@@ -609,12 +637,14 @@ function createWatermark(){
       top:8vh;
     }
 
+
     .watermark-cycle-0
     .watermark-line:nth-child(2),
     .watermark-cycle-1
     .watermark-line:nth-child(2){
       top:31vh;
     }
+
 
     .watermark-cycle-0
     .watermark-line:nth-child(3),
@@ -623,12 +653,14 @@ function createWatermark(){
       top:54vh;
     }
 
+
     .watermark-cycle-0
     .watermark-line:nth-child(4),
     .watermark-cycle-1
     .watermark-line:nth-child(4){
       top:77vh;
     }
+
 
     .watermark-word{
       position:absolute;
@@ -648,9 +680,11 @@ function createWatermark(){
         );
 
       font-weight:800;
+
       font-style:italic;
 
       line-height:.8;
+
       letter-spacing:-.07em;
 
       color:#111;
@@ -664,6 +698,7 @@ function createWatermark(){
       opacity:.92;
     }
 
+
     @media(max-width:900px){
 
       .watermark-word{
@@ -674,9 +709,11 @@ function createWatermark(){
 
   `;
 
+
   document.head.appendChild(
     style
   );
+
 }
 
 
@@ -690,10 +727,12 @@ function updateWatermark(){
       ".scroll-watermark"
     );
 
+
   const cycles =
     document.querySelectorAll(
       ".watermark-cycle"
     );
+
 
   if(
     !watermark ||
@@ -702,6 +741,7 @@ function updateWatermark(){
     return;
   }
 
+
   const maxScroll =
     Math.max(
       document.documentElement.scrollHeight -
@@ -709,22 +749,20 @@ function updateWatermark(){
       1
     );
 
+
   const progress =
     Math.min(
       Math.max(
-        window.scrollY / maxScroll,
+        window.scrollY /
+        maxScroll,
         0
       ),
       1
     );
 
 
-  /*
-    Each composition occupies
-    exactly one half of the page.
-  */
-
   let activeCycle;
+
   let cycleProgress;
 
 
@@ -748,19 +786,19 @@ function updateWatermark(){
 
 
   /*
-    Smooth crossfade around the
-    halfway point.
-
-    The first composition fades
-    out while the second fades in.
+    Smooth transition between
+    the two compositions.
   */
 
-  const transitionZone = .055;
+  const transitionZone =
+    .055;
 
 
   if(
-    progress > .5 - transitionZone &&
-    progress < .5 + transitionZone
+    progress >
+      .5 - transitionZone &&
+    progress <
+      .5 + transitionZone
   ){
 
     const transitionProgress =
@@ -772,7 +810,8 @@ function updateWatermark(){
 
 
     cycles[0].style.opacity =
-      1 - transitionProgress;
+      1 -
+      transitionProgress;
 
 
     cycles[1].style.opacity =
@@ -796,11 +835,6 @@ function updateWatermark(){
   }
 
 
-  /*
-    Animate the currently relevant
-    composition.
-  */
-
   cycles.forEach(
     (cycle,cycleIndex)=>{
 
@@ -809,11 +843,6 @@ function updateWatermark(){
           ".watermark-word"
         );
 
-
-      /*
-        During the transition both
-        compositions remain animated.
-      */
 
       let localProgress;
 
@@ -856,18 +885,19 @@ function updateWatermark(){
 
           const speed =
             parseFloat(
-              element.dataset.speed || 1
+              element.dataset.speed ||
+              1
             );
 
 
           const isLead =
-            element.dataset.lead === "true";
+            element.dataset.lead ===
+            "true";
 
 
           /*
-            Lead words UNDER and OVER
-            travel slightly ahead of the
-            lower word in their pair.
+            UNDER and OVER lead their
+            respective following word.
           */
 
           const leadOffset =
@@ -877,11 +907,6 @@ function updateWatermark(){
                 : -.12
               : 0;
 
-
-          /*
-            Same-direction lines have
-            slightly different speeds.
-          */
 
           const individualProgress =
             Math.min(
@@ -897,7 +922,8 @@ function updateWatermark(){
 
 
           const travel =
-            window.innerWidth * 1.45;
+            window.innerWidth *
+            1.45;
 
 
           const start =
@@ -915,7 +941,8 @@ function updateWatermark(){
           const x =
             start +
             (
-              end - start
+              end -
+              start
             ) *
             individualProgress;
 
@@ -968,11 +995,6 @@ function updateWatermark(){
   );
 
 
-  /*
-    Everything disappears smoothly
-    at the very bottom.
-  */
-
   if(progress > .94){
 
     const fade =
@@ -981,6 +1003,7 @@ function updateWatermark(){
         (progress - .94) /
         .06
       );
+
 
     watermark.style.opacity =
       Math.max(
@@ -1006,7 +1029,9 @@ function updateWatermark(){
 function updatePage(){
 
   updateHeader();
+
   updateGallery();
+
   updateWatermark();
 
 }
@@ -1031,7 +1056,9 @@ window.addEventListener(
 
 if(
   cursor &&
-  window.matchMedia("(pointer:fine)").matches
+  window.matchMedia(
+    "(pointer:fine)"
+  ).matches
 ){
 
   let mouseX =
@@ -1079,6 +1106,7 @@ if(
         cursorX
       ) *
       .22;
+
 
     cursorY +=
       (
@@ -1156,9 +1184,11 @@ if(
       element.addEventListener(
         "mouseenter",
         () => {
+
           cursor.classList.add(
             "hover"
           );
+
         }
       );
 
@@ -1166,9 +1196,11 @@ if(
       element.addEventListener(
         "mouseleave",
         () => {
+
           cursor.classList.remove(
             "hover"
           );
+
         }
       );
 
@@ -1178,9 +1210,11 @@ if(
   document.addEventListener(
     "mouseleave",
     () => {
+
       cursor.classList.add(
         "hidden"
       );
+
     }
   );
 
@@ -1188,18 +1222,16 @@ if(
   document.addEventListener(
     "mouseenter",
     () => {
+
       cursor.classList.remove(
         "hidden"
       );
+
     }
   );
 
 }
 
-
-/* =========================================
-   START
-   ========================================= */
 
 loadGallery();
 updatePage();
