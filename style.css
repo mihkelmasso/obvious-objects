@@ -712,3 +712,41 @@ footer.scrolled{
     font-size:9px;
   }
 }
+.contact-end{
+  min-height:100vh !important;
+  padding-top:16vh;
+  padding-bottom:120px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+}
+
+.contact-content{
+  width:42vw;
+  max-width:620px;
+}
+
+.contact-content h1{
+  margin-bottom:28px;
+}
+
+.contact-content p{
+  margin-bottom:18px;
+}
+
+.contact-content form{
+  margin-top:42px;
+}
+
+@media(max-width:900px){
+
+  .contact-end{
+    min-height:100vh !important;
+    padding-top:120px;
+  }
+
+  .contact-content{
+    width:100%;
+  }
+
+}
