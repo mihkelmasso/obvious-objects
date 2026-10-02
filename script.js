@@ -66,7 +66,7 @@ async function loadGallery(){
       .forEach(tile => tile.remove());
 
 
-    /* Create tiles */
+    /* Create gallery tiles */
 
     imageFiles.forEach((file,index) => {
 
@@ -77,6 +77,11 @@ async function loadGallery(){
         "tile";
 
 
+      /*
+        Tighter, larger composition.
+        Images occupy the page more densely.
+      */
+
       const pattern =
         index % 8;
 
@@ -86,73 +91,78 @@ async function loadGallery(){
 
 
       if(pattern === 0){
-        width = 26;
-        left = 8;
-        top = index * 68 + 8;
+        width = 30;
+        left = 5;
+        top = index * 36 + 5;
       }
 
       else if(pattern === 1){
-        width = 22;
-        left = 64;
-        top = index * 68 + 32;
+        width = 27;
+        left = 58;
+        top = index * 36 + 22;
       }
 
       else if(pattern === 2){
-        width = 30;
-        left = 18;
-        top = index * 68 + 58;
+        width = 33;
+        left = 20;
+        top = index * 36 + 39;
       }
 
       else if(pattern === 3){
-        width = 23;
-        left = 72;
-        top = index * 68 + 82;
+        width = 28;
+        left = 68;
+        top = index * 36 + 56;
       }
 
       else if(pattern === 4){
-        width = 28;
-        left = 38;
-        top = index * 68 + 108;
+        width = 31;
+        left = 36;
+        top = index * 36 + 73;
       }
 
       else if(pattern === 5){
-        width = 20;
-        left = 6;
-        top = index * 68 + 138;
+        width = 26;
+        left = 2;
+        top = index * 36 + 90;
       }
 
       else if(pattern === 6){
-        width = 25;
-        left = 57;
-        top = index * 68 + 164;
+        width = 29;
+        left = 54;
+        top = index * 36 + 107;
       }
 
       else{
-        width = 29;
-        left = 25;
-        top = index * 68 + 190;
+        width = 32;
+        left = 17;
+        top = index * 36 + 124;
       }
 
 
+      /*
+        Small deterministic variation.
+      */
+
       const sizeVariation =
-        Math.sin(index * 3.17) * 3.5;
+        Math.sin(index * 3.17) * 4;
+
 
       const horizontalVariation =
-        Math.cos(index * 2.41) * 4;
+        Math.cos(index * 2.41) * 5;
 
 
       width =
         Math.max(
-          17,
+          23,
           width + sizeVariation
         );
 
 
       left =
         Math.max(
-          2,
+          1,
           Math.min(
-            76,
+            72,
             left + horizontalVariation
           )
         );
@@ -161,12 +171,19 @@ async function loadGallery(){
       tile.style.width =
         `${width}vw`;
 
+
       tile.style.left =
         `${left}vw`;
+
 
       tile.style.top =
         `${top}vh`;
 
+
+      /*
+        Keep the existing movement
+        personality.
+      */
 
       const speed =
         0.018 +
@@ -205,12 +222,15 @@ async function loadGallery(){
       img.src =
         file.download_url;
 
+
       img.alt = "";
 
+
       img.loading =
-        index < 4
+        index < 6
           ? "eager"
           : "lazy";
+
 
       img.decoding =
         "async";
@@ -223,20 +243,43 @@ async function loadGallery(){
 
       tile.appendChild(img);
 
+
       gallery.appendChild(tile);
 
     });
 
 
+    /*
+      Gallery occupies approximately
+      two thirds of the complete page.
+
+      The contact section is then given
+      the remaining third.
+    */
+
     const galleryHeight =
       Math.max(
-        900,
-        imageFiles.length * 68 + 260
+        720,
+        imageFiles.length * 36 + 120
       );
 
 
     gallery.style.minHeight =
       `${galleryHeight}vh`;
+
+
+    const contact =
+      document.querySelector(
+        ".contact-end"
+      );
+
+
+    if(contact){
+
+      contact.style.minHeight =
+        `${galleryHeight / 2}vh`;
+
+    }
 
 
     updatePage();
@@ -508,8 +551,8 @@ function updateGallery(){
    SECTION 2
    LEFT → RIGHT
 
-   OVER
-   DEFINED
+   UNDER
+   CONSTRUCTION
 
 
    SECTION 3
@@ -539,14 +582,14 @@ const watermarkSections = [
 
   [
     {
-      text:"OVER",
+      text:"UNDER",
       direction:1,
       delay:0,
       speed:0.56
     },
 
     {
-      text:"DEFINED",
+      text:"CONSTRUCTION",
       direction:1,
       delay:0.12,
       speed:0.60
@@ -559,12 +602,16 @@ const watermarkSections = [
       text:"CONTACT",
       direction:-1,
       delay:0,
-      speed:0.46
+      speed:0.48
     }
   ]
 
 ];
 
+
+/* =========================================
+   CREATE WATERMARK
+   ========================================= */
 
 function createWatermark(){
 
@@ -832,12 +879,12 @@ function updateWatermark(){
 
 
   /*
-    Three equal sections across
-    the entire page.
+    Three equal sections across the
+    complete document.
 
-    0.00 → 0.333
+    0.000 → 0.333
     0.333 → 0.666
-    0.666 → 1.00
+    0.666 → 1.000
   */
 
   const sectionCount =
@@ -873,11 +920,12 @@ function updateWatermark(){
 
 
   /*
-    Smooth handover between sections.
+    Smooth transition between
+    adjacent sections.
   */
 
   const transitionZone =
-    0.12;
+    0.10;
 
 
   sections.forEach(
@@ -939,7 +987,7 @@ function updateWatermark(){
 
 
   /*
-    Animate each section.
+    Animate every section independently.
   */
 
   sections.forEach(
@@ -990,7 +1038,7 @@ function updateWatermark(){
 
 
           /*
-            Upper line enters first.
+            Upper line appears first.
           */
 
           const delayedProgress =
@@ -1007,11 +1055,6 @@ function updateWatermark(){
             );
 
 
-          /*
-            Slower movement so the words
-            remain visible longer.
-          */
-
           const individualProgress =
             Math.min(
               Math.max(
@@ -1024,85 +1067,25 @@ function updateWatermark(){
 
 
           /*
-            CONTACT is different:
-            it enters from the right and
-            settles in the upper-right
-            when the contact area is reached.
+            CONTACT gets a slower,
+            longer movement so that it
+            remains present while the
+            contact form enters view.
           */
+
+          let effectiveProgress =
+            individualProgress;
+
 
           if(
             sectionNumber === 2
           ){
 
-            const enterProgress =
+            effectiveProgress =
               Math.min(
-                individualProgress /
-                0.62,
-                1
+                individualProgress,
+                0.82
               );
-
-
-            const startX =
-              window.innerWidth +
-              120;
-
-
-            const targetX =
-              window.innerWidth -
-              Math.min(
-                window.innerWidth * .10,
-                180
-              );
-
-
-            const x =
-              startX +
-              (
-                targetX -
-                startX
-              ) *
-              enterProgress;
-
-
-            const y =
-              15;
-
-
-            const rotationY =
-              Math.sin(
-                enterProgress *
-                Math.PI
-              ) *
-              12;
-
-
-            const scale =
-              1 +
-              Math.sin(
-                enterProgress *
-                Math.PI
-              ) *
-              .025;
-
-
-            element.style.transform =
-              `
-              translate3d(
-                ${x}px,
-                ${y}px,
-                0
-              )
-              translateX(-100%)
-              rotateY(${rotationY}deg)
-              scale(${scale})
-              `;
-
-
-            element.style.opacity =
-              1;
-
-
-            return;
 
           }
 
@@ -1130,12 +1113,12 @@ function updateWatermark(){
               end -
               start
             ) *
-            individualProgress;
+            effectiveProgress;
 
 
           const y =
             Math.sin(
-              individualProgress *
+              effectiveProgress *
               Math.PI *
               2 +
               rowIndex
@@ -1145,7 +1128,7 @@ function updateWatermark(){
 
           const rotationY =
             Math.sin(
-              individualProgress *
+              effectiveProgress *
               Math.PI *
               2
             ) *
@@ -1155,7 +1138,7 @@ function updateWatermark(){
           const scale =
             1 +
             Math.sin(
-              individualProgress *
+              effectiveProgress *
               Math.PI *
               2 +
               rowIndex
@@ -1186,13 +1169,12 @@ function updateWatermark(){
 
 
   /*
-    Keep CONTACT visible through the
-    end of the page, where the form is.
+    Keep CONTACT visible during
+    the final contact area.
   */
 
   if(
-    sectionIndex === 2 &&
-    sectionProgress > .62
+    sectionIndex === 2
   ){
 
     watermark.style.opacity =
