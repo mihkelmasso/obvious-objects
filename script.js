@@ -66,7 +66,9 @@ async function loadGallery(){
       .forEach(tile => tile.remove());
 
 
-    /* Create gallery tiles */
+    /* =====================================
+       CREATE TIGHTER / LARGER GALLERY
+       ===================================== */
 
     imageFiles.forEach((file,index) => {
 
@@ -77,13 +79,9 @@ async function loadGallery(){
         "tile";
 
 
-      /*
-        Tighter, larger composition.
-        Images occupy the page more densely.
-      */
-
       const pattern =
         index % 8;
+
 
       let width;
       let left;
@@ -91,69 +89,81 @@ async function loadGallery(){
 
 
       if(pattern === 0){
-        width = 30;
-        left = 5;
-        top = index * 36 + 5;
+
+        width = 31;
+        left = 4;
+        top = index * 29 + 4;
+
       }
 
       else if(pattern === 1){
-        width = 27;
-        left = 58;
-        top = index * 36 + 22;
+
+        width = 28;
+        left = 57;
+        top = index * 29 + 17;
+
       }
 
       else if(pattern === 2){
-        width = 33;
-        left = 20;
-        top = index * 36 + 39;
+
+        width = 34;
+        left = 18;
+        top = index * 29 + 30;
+
       }
 
       else if(pattern === 3){
-        width = 28;
-        left = 68;
-        top = index * 36 + 56;
+
+        width = 29;
+        left = 67;
+        top = index * 29 + 43;
+
       }
 
       else if(pattern === 4){
-        width = 31;
-        left = 36;
-        top = index * 36 + 73;
+
+        width = 32;
+        left = 35;
+        top = index * 29 + 56;
+
       }
 
       else if(pattern === 5){
-        width = 26;
-        left = 2;
-        top = index * 36 + 90;
+
+        width = 27;
+        left = 1;
+        top = index * 29 + 69;
+
       }
 
       else if(pattern === 6){
-        width = 29;
-        left = 54;
-        top = index * 36 + 107;
+
+        width = 30;
+        left = 53;
+        top = index * 29 + 82;
+
       }
 
       else{
-        width = 32;
-        left = 17;
-        top = index * 36 + 124;
+
+        width = 33;
+        left = 16;
+        top = index * 29 + 95;
+
       }
 
 
-      /*
-        Small deterministic variation.
-      */
-
       const sizeVariation =
-        Math.sin(index * 3.17) * 4;
+        Math.sin(index * 3.17) * 3.5;
 
 
       const horizontalVariation =
-        Math.cos(index * 2.41) * 5;
+        Math.cos(index * 2.41) * 4;
 
 
       width =
         Math.max(
-          23,
+          25,
           width + sizeVariation
         );
 
@@ -162,7 +172,7 @@ async function loadGallery(){
         Math.max(
           1,
           Math.min(
-            72,
+            70,
             left + horizontalVariation
           )
         );
@@ -181,8 +191,7 @@ async function loadGallery(){
 
 
       /*
-        Keep the existing movement
-        personality.
+        Existing floating movement.
       */
 
       const speed =
@@ -243,30 +252,30 @@ async function loadGallery(){
 
       tile.appendChild(img);
 
-
       gallery.appendChild(tile);
 
     });
 
 
     /*
-      Gallery occupies approximately
-      two thirds of the complete page.
-
-      The contact section is then given
-      the remaining third.
+      Much tighter vertical rhythm.
     */
 
     const galleryHeight =
       Math.max(
-        720,
-        imageFiles.length * 36 + 120
+        620,
+        imageFiles.length * 29 + 100
       );
 
 
     gallery.style.minHeight =
       `${galleryHeight}vh`;
 
+
+    /*
+      Give the contact area enough room
+      to become the final visual section.
+    */
 
     const contact =
       document.querySelector(
@@ -277,7 +286,10 @@ async function loadGallery(){
     if(contact){
 
       contact.style.minHeight =
-        `${galleryHeight / 2}vh`;
+        `${Math.max(
+          100,
+          galleryHeight / 2
+        )}vh`;
 
     }
 
@@ -602,7 +614,7 @@ const watermarkSections = [
       text:"CONTACT",
       direction:-1,
       delay:0,
-      speed:0.48
+      speed:0.40
     }
   ]
 
@@ -770,7 +782,7 @@ function createWatermark(){
 
     .watermark-section-2
     .watermark-line:nth-child(1){
-      top:15vh;
+      top:13vh;
     }
 
 
@@ -879,12 +891,8 @@ function updateWatermark(){
 
 
   /*
-    Three equal sections across the
-    complete document.
-
-    0.000 → 0.333
-    0.333 → 0.666
-    0.666 → 1.000
+    Three equal sections across
+    the complete page.
   */
 
   const sectionCount =
@@ -920,8 +928,7 @@ function updateWatermark(){
 
 
   /*
-    Smooth transition between
-    adjacent sections.
+    Smooth handover.
   */
 
   const transitionZone =
@@ -935,9 +942,7 @@ function updateWatermark(){
 
 
       if(index === sectionIndex){
-
         opacity = 1;
-
       }
 
 
@@ -987,7 +992,7 @@ function updateWatermark(){
 
 
   /*
-    Animate every section independently.
+    Animate sections.
   */
 
   sections.forEach(
@@ -1067,25 +1072,87 @@ function updateWatermark(){
 
 
           /*
-            CONTACT gets a slower,
-            longer movement so that it
-            remains present while the
-            contact form enters view.
+            CONTACT is deliberately
+            stopped on the right side
+            so it never travels over
+            the contact form on the left.
           */
-
-          let effectiveProgress =
-            individualProgress;
-
 
           if(
             sectionNumber === 2
           ){
 
-            effectiveProgress =
+            const settleProgress =
               Math.min(
-                individualProgress,
-                0.82
+                individualProgress /
+                0.62,
+                1
               );
+
+
+            const startX =
+              window.innerWidth +
+              160;
+
+
+            /*
+              Right edge of CONTACT
+              settles around 94vw.
+            */
+
+            const targetX =
+              window.innerWidth *
+              0.94;
+
+
+            const x =
+              startX +
+              (
+                targetX -
+                startX
+              ) *
+              settleProgress;
+
+
+            const y =
+              0;
+
+
+            const rotationY =
+              Math.sin(
+                settleProgress *
+                Math.PI
+              ) *
+              10;
+
+
+            const scale =
+              1 +
+              Math.sin(
+                settleProgress *
+                Math.PI
+              ) *
+              .025;
+
+
+            element.style.transform =
+              `
+              translate3d(
+                ${x}px,
+                ${y}px,
+                0
+              )
+              translateX(-100%)
+              rotateY(${rotationY}deg)
+              scale(${scale})
+              `;
+
+
+            element.style.opacity =
+              1;
+
+
+            return;
 
           }
 
@@ -1113,12 +1180,12 @@ function updateWatermark(){
               end -
               start
             ) *
-            effectiveProgress;
+            individualProgress;
 
 
           const y =
             Math.sin(
-              effectiveProgress *
+              individualProgress *
               Math.PI *
               2 +
               rowIndex
@@ -1128,7 +1195,7 @@ function updateWatermark(){
 
           const rotationY =
             Math.sin(
-              effectiveProgress *
+              individualProgress *
               Math.PI *
               2
             ) *
@@ -1138,7 +1205,7 @@ function updateWatermark(){
           const scale =
             1 +
             Math.sin(
-              effectiveProgress *
+              individualProgress *
               Math.PI *
               2 +
               rowIndex
@@ -1168,26 +1235,8 @@ function updateWatermark(){
   );
 
 
-  /*
-    Keep CONTACT visible during
-    the final contact area.
-  */
-
-  if(
-    sectionIndex === 2
-  ){
-
-    watermark.style.opacity =
-      1;
-
-  }
-
-  else{
-
-    watermark.style.opacity =
-      1;
-
-  }
+  watermark.style.opacity =
+    1;
 
 }
 
