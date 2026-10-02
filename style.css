@@ -831,3 +831,6 @@ footer.scrolled{
   }
 
 }
+.seo-intro h1{
+  display:none;
+}
