@@ -66,14 +66,15 @@ async function loadGallery(){
       .forEach(tile => tile.remove());
 
 
-    /* Create gallery tiles */
+    /* Create tiles */
 
     imageFiles.forEach((file,index) => {
 
       const tile =
         document.createElement("div");
 
-      tile.className = "tile";
+      tile.className =
+        "tile";
 
 
       const pattern =
@@ -494,7 +495,7 @@ function updateGallery(){
 
 
 /* =========================================
-   WATERMARK
+   WATERMARK SECTIONS
    ========================================= */
 
 const watermarkSections = [
@@ -533,33 +534,10 @@ const watermarkSections = [
 
   [
     {
-      text:"OVER",
+      text:"CONTACT",
       direction:-1,
       delay:0,
-      speed:0.94
-    },
-
-    {
-      text:"RATEEEEEEEEEEEEEEEEEEE",
-      direction:-1,
-      delay:0.08,
       speed:1.00
-    }
-  ],
-
-  [
-    {
-      text:"IS THIS",
-      direction:1,
-      delay:0,
-      speed:0.96
-    },
-
-    {
-      text:"GOING",
-      direction:1,
-      delay:0.08,
-      speed:1.04
     }
   ]
 
@@ -830,7 +808,8 @@ function updateWatermark(){
 
 
   const sectionSize =
-    1 / sectionCount;
+    1 /
+    sectionCount;
 
 
   const rawSection =
@@ -861,7 +840,7 @@ function updateWatermark(){
   */
 
   const transitionZone =
-    .12;
+    0.12;
 
 
   sections.forEach(
@@ -871,9 +850,7 @@ function updateWatermark(){
 
 
       if(index === sectionIndex){
-
         opacity = 1;
-
       }
 
 
@@ -923,40 +900,22 @@ function updateWatermark(){
 
 
   /*
-    Animate each section independently.
+    Animate every section according
+    to its own local scroll progress.
   */
 
   sections.forEach(
-    (section,sectionIndex)=>{
+    (section,sectionNumber)=>{
 
-      let localProgress;
-
-
-      if(sectionIndex === sectionIndex){
-
-        if(sectionIndex < watermarkSections.length){
-
-          const start =
-            sectionIndex *
-            sectionSize;
-
-
-          localProgress =
-            (
-              progress -
-              start
-            ) /
-            sectionSize;
-
-        }
-
-      }
-
-
-      localProgress =
+      const localProgress =
         Math.min(
           Math.max(
-            localProgress,
+            (
+              progress -
+              sectionNumber *
+              sectionSize
+            ) /
+            sectionSize,
             0
           ),
           1
@@ -993,7 +952,7 @@ function updateWatermark(){
 
 
           /*
-            The upper word enters first.
+            Upper word always enters first.
           */
 
           const delayedProgress =
@@ -1009,11 +968,6 @@ function updateWatermark(){
               1
             );
 
-
-          /*
-            Slightly different speeds
-            preserve the existing movement.
-          */
 
           const individualProgress =
             Math.min(
@@ -1093,49 +1047,6 @@ function updateWatermark(){
             scale(${scale})
             `;
 
-
-          /*
-            RATEEEEE fades gradually as
-            its long word crosses the page.
-          */
-
-          if(
-            element.textContent.startsWith(
-              "RATE"
-            )
-          ){
-
-            let rateOpacity = 1;
-
-
-            if(
-              individualProgress > .62
-            ){
-
-              rateOpacity =
-                1 -
-                (
-                  (individualProgress - .62) /
-                  .38
-                );
-
-            }
-
-
-            element.style.opacity =
-              Math.max(
-                rateOpacity,
-                0
-              );
-
-          }
-
-          else{
-
-            element.style.opacity = 1;
-
-          }
-
         }
       );
 
@@ -1144,8 +1055,8 @@ function updateWatermark(){
 
 
   /*
-    The final composition disappears
-    at the absolute bottom.
+    Fade the watermark out at the
+    absolute end of the page.
   */
 
   if(progress > .94){
@@ -1218,6 +1129,7 @@ if(
   let mouseX =
     window.innerWidth / 2;
 
+
   let mouseY =
     window.innerHeight / 2;
 
@@ -1225,12 +1137,14 @@ if(
   let cursorX =
     mouseX;
 
+
   let cursorY =
     mouseY;
 
 
   let previousX =
     cursorX;
+
 
   let previousY =
     cursorY;
@@ -1242,6 +1156,7 @@ if(
 
       mouseX =
         event.clientX;
+
 
       mouseY =
         event.clientY;
@@ -1395,8 +1310,5 @@ if(
    START
    ========================================= */
 
-createWatermark();
-
 loadGallery();
-
 updatePage();
