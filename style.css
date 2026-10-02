@@ -20,27 +20,18 @@ a{
   text-decoration:none;
 }
 
-
-/* =========================
-   HEADER
-   ========================= */
-
 header{
   position:fixed;
   top:0;
   left:0;
   width:100%;
   z-index:100;
-
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
-
   padding:52px 10vw 24px;
-
   background:rgba(247,247,245,.82);
   backdrop-filter:blur(14px);
-
   transition:
     padding .55s cubic-bezier(.22,1,.36,1),
     background .55s ease;
@@ -55,7 +46,6 @@ header.scrolled{
   font-size:52px;
   letter-spacing:.02em;
   font-weight:400;
-
   transition:
     font-size .55s cubic-bezier(.22,1,.36,1),
     letter-spacing .55s cubic-bezier(.22,1,.36,1);
@@ -66,15 +56,91 @@ header.scrolled .logo{
   letter-spacing:.08em;
 }
 
+nav{
+  display:flex;
+  gap:28px;
+  align-items:flex-start;
+  font-size:17px;
+  transition:
+    font-size .55s cubic-bezier(.22,1,.36,1),
+    gap .55s cubic-bezier(.22,1,.36,1);
+}
 
-/* =========================
-   HOME GALLERY
-   ========================= */
+header.scrolled nav{
+  font-size:12px;
+  gap:24px;
+  letter-spacing:.04em;
+}
+
+.nav-item{
+  position:relative;
+  padding-bottom:22px;
+}
+
+.nav-item::after{
+  content:"";
+  position:absolute;
+  left:0;
+  top:100%;
+  width:100%;
+  height:24px;
+}
+
+.dropdown{
+  position:absolute;
+  top:30px;
+  right:0;
+  min-width:230px;
+  background:rgba(247,247,245,.96);
+  backdrop-filter:blur(14px);
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(8px);
+  transition:
+    opacity .25s ease,
+    transform .25s cubic-bezier(.22,1,.36,1);
+}
+
+.nav-item:hover .dropdown,
+.nav-item:focus-within .dropdown{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(0);
+}
+
+.drawing-overlay{
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  z-index:30;
+  pointer-events:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.drawing-overlay img{
+  display:block;
+  width:min(58vw,900px);
+  height:78vh;
+  object-fit:contain;
+  opacity:.22;
+  mix-blend-mode:multiply;
+  flex:none;
+  pointer-events:none;
+}
 
 .gallery{
   position:relative;
   min-height:900vh;
   padding-bottom:40vh;
+  z-index:1;
 }
 
 .tile{
@@ -89,17 +155,11 @@ header.scrolled .logo{
   width:100%;
   height:auto;
   display:block;
-
   transition:
     opacity .4s ease,
     transform .9s cubic-bezier(.22,1,.36,1),
     filter .4s ease;
 }
-
-
-/* =========================
-   GALLERY POSITIONS
-   ========================= */
 
 .t1{
   width:26vw;
@@ -179,11 +239,6 @@ header.scrolled .logo{
   top:815vh;
 }
 
-
-/* =========================
-   STATIC PAGES
-   ========================= */
-
 .page{
   padding:180px 10vw 120px;
 }
@@ -200,11 +255,6 @@ header.scrolled .logo{
   line-height:1.65;
   color:#222;
 }
-
-
-/* =========================
-   PRODUCT PAGES
-   ========================= */
 
 .product-page{
   padding:160px 8vw 100px;
@@ -247,11 +297,6 @@ header.scrolled .logo{
   gap:40px;
 }
 
-
-/* =========================
-   EXHIBITION PAGES
-   ========================= */
-
 .exhibition-page{
   position:relative;
   min-height:430vh;
@@ -264,9 +309,6 @@ header.scrolled .logo{
   will-change:transform;
   transform-origin:center center;
 }
-
-
-/* TITLE */
 
 .exhibit-title{
   top:20vh;
@@ -287,9 +329,6 @@ header.scrolled .logo{
   color:#333;
 }
 
-
-/* IMAGES */
-
 .exhibit-image img{
   width:100%;
   display:block;
@@ -309,15 +348,11 @@ header.scrolled .logo{
   z-index:2;
 }
 
-
-/* TEXT */
-
 .description-block{
   width:36vw;
   top:118vh;
   left:12vw;
   z-index:3;
-
   font-size:28px;
   line-height:1.3;
   letter-spacing:-.02em;
@@ -328,7 +363,6 @@ header.scrolled .logo{
   top:250vh;
   right:12vw;
   z-index:4;
-
   font-size:20px;
   line-height:1.45;
   color:#222;
@@ -339,23 +373,17 @@ header.scrolled .logo{
   background:rgba(247,247,245,.88);
   backdrop-filter:blur(6px);
   padding:.15em .35em;
-
   box-decoration-break:clone;
   -webkit-box-decoration-break:clone;
 }
-
-
-/* INFORMATION */
 
 .info-block{
   width:44vw;
   top:340vh;
   left:10vw;
   z-index:5;
-
   background:rgba(247,247,245,.78);
   backdrop-filter:blur(10px);
-
   padding:40px;
 }
 
@@ -369,11 +397,8 @@ header.scrolled .logo{
   display:flex;
   justify-content:space-between;
   gap:40px;
-
   border-bottom:1px solid rgba(0,0,0,.18);
-
   padding:16px 0;
-
   font-size:15px;
 }
 
@@ -384,11 +409,6 @@ header.scrolled .logo{
 .info-block form{
   margin-top:46px;
 }
-
-
-/* =========================
-   DESK
-   ========================= */
 
 .desk-page .image-large{
   width:58vw;
@@ -415,11 +435,6 @@ header.scrolled .logo{
   top:340vh;
   left:10vw;
 }
-
-
-/* =========================
-   CHAIR
-   ========================= */
 
 .chair-page{
   min-height:470vh;
@@ -458,11 +473,6 @@ header.scrolled .logo{
   left:auto;
 }
 
-
-/* =========================
-   SWAN LAMP
-   ========================= */
-
 .lamp-page{
   min-height:455vh;
 }
@@ -498,11 +508,6 @@ header.scrolled .logo{
   left:10vw;
 }
 
-
-/* =========================
-   FORMS
-   ========================= */
-
 form{
   margin-top:50px;
   max-width:560px;
@@ -511,15 +516,11 @@ form{
 input,
 textarea{
   width:100%;
-
   border:none;
   border-bottom:1px solid #999;
-
   background:transparent;
-
   padding:14px 0;
   margin-bottom:24px;
-
   font-family:inherit;
   font-size:15px;
 }
@@ -527,12 +528,9 @@ textarea{
 button{
   border:1px solid #111;
   background:transparent;
-
   padding:14px 26px;
-
   font-family:inherit;
   cursor:pointer;
-
   transition:
     background .25s ease,
     color .25s ease;
@@ -543,23 +541,29 @@ button:hover{
   color:#fff;
 }
 
-
-/* =========================
-   FOOTER
-   ========================= */
-
 footer{
-  position:relative;
-  z-index:20;
-
-  padding:80px 10vw;
+  position:fixed;
+  left:0;
+  bottom:0;
+  width:100%;
+  z-index:90;
 
   display:flex;
   justify-content:space-between;
   align-items:flex-end;
 
+  padding:24px 10vw;
+
+  background:rgba(247,247,245,.82);
+  backdrop-filter:blur(14px);
+
   color:#777;
-  font-size:13px;
+  font-size:15px;
+
+  transition:
+    padding .55s cubic-bezier(.22,1,.36,1),
+    font-size .55s cubic-bezier(.22,1,.36,1),
+    background .55s ease;
 }
 
 footer a{
@@ -571,10 +575,11 @@ footer a:hover{
   opacity:.5;
 }
 
-
-/* =========================
-   CUSTOM CURSOR
-   ========================= */
+footer.scrolled{
+  padding:10px 10vw;
+  font-size:11px;
+  background:rgba(247,247,245,.90);
+}
 
 @media (pointer:fine){
 
@@ -586,22 +591,15 @@ footer a:hover{
 
   .cursor{
     position:fixed;
-
     top:0;
     left:0;
-
     width:72px;
     height:72px;
-
     border:24px solid #000;
     border-radius:50%;
-
     pointer-events:none;
-
     z-index:999999;
-
     transform:translate(-50%,-50%);
-
     transition:
       width .35s ease,
       height .35s ease,
@@ -626,11 +624,6 @@ footer a:hover{
   }
 }
 
-
-/* =========================
-   MOBILE
-   ========================= */
-
 @media(max-width:900px){
 
   header{
@@ -643,8 +636,7 @@ footer a:hover{
 
   .gallery{
     min-height:auto;
-    padding:140px 24px 80px;
-
+    padding:140px 24px 100px;
     display:flex;
     flex-direction:column;
     gap:50px;
@@ -671,12 +663,10 @@ footer a:hover{
 
   .exhibition-page{
     min-height:auto;
-    padding:140px 24px 80px;
-
+    padding:140px 24px 100px;
     display:flex;
     flex-direction:column;
     gap:48px;
-
     overflow:visible;
   }
 
@@ -706,34 +696,19 @@ footer a:hover{
     gap:6px;
   }
 
-  footer{
-    padding:50px 24px;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:20px;
+  .drawing-overlay img{
+    width:80vw;
+    height:60vh;
+    opacity:.18;
   }
-}
-.drawing-overlay{
-  position:fixed;
-  inset:0;
-  z-index:10;
-  pointer-events:none;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  footer{
+    padding:14px 24px;
+    font-size:11px;
+  }
 
-  overflow:hidden;
-}
-
-.drawing-overlay img{
-  width:70vw;
-  max-width:1100px;
-  height:auto;
-
-  opacity:.32;
-
-  object-fit:contain;
-
-  mix-blend-mode:multiply;
+  footer.scrolled{
+    padding:8px 24px;
+    font-size:9px;
+  }
 }
