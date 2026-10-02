@@ -7,6 +7,10 @@ const GALLERY_API =
   "https://api.github.com/repos/mihkelmasso/obvious-objects/contents/images/gallery";
 
 
+/* =========================================
+   AUTOMATIC GALLERY
+   ========================================= */
+
 async function loadGallery(){
 
   if(!gallery){
@@ -35,6 +39,9 @@ async function loadGallery(){
           /\.(jpg|jpeg|png|webp|avif)$/i.test(file.name);
       });
 
+
+    /* Randomise gallery order */
+
     for(let i = imageFiles.length - 1; i > 0; i--){
 
       const j =
@@ -51,9 +58,15 @@ async function loadGallery(){
       ];
     }
 
+
+    /* Remove existing tiles */
+
     gallery
       .querySelectorAll(".tile")
       .forEach(tile => tile.remove());
+
+
+    /* Create tiles */
 
     imageFiles.forEach((file,index) => {
 
@@ -62,12 +75,14 @@ async function loadGallery(){
 
       tile.className = "tile";
 
+
       const pattern =
         index % 8;
 
       let width;
       let left;
       let top;
+
 
       if(pattern === 0){
         width = 26;
@@ -117,17 +132,20 @@ async function loadGallery(){
         top = index * 68 + 190;
       }
 
+
       const sizeVariation =
         Math.sin(index * 3.17) * 3.5;
 
       const horizontalVariation =
         Math.cos(index * 2.41) * 4;
 
+
       width =
         Math.max(
           17,
           width + sizeVariation
         );
+
 
       left =
         Math.max(
@@ -138,6 +156,7 @@ async function loadGallery(){
           )
         );
 
+
       tile.style.width =
         `${width}vw`;
 
@@ -147,16 +166,19 @@ async function loadGallery(){
       tile.style.top =
         `${top}vh`;
 
+
       const speed =
         0.018 +
         Math.abs(
           Math.sin(index * 1.73)
         ) * 0.025;
 
+
       const direction =
         index % 2 === 0
           ? 1
           : -1;
+
 
       const scale =
         0.90 +
@@ -164,16 +186,20 @@ async function loadGallery(){
           Math.cos(index * 2.13)
         ) * 0.16;
 
+
       tile.dataset.speed =
         (
           speed * direction
         ).toFixed(4);
 
+
       tile.dataset.scale =
         scale.toFixed(3);
 
+
       const img =
         document.createElement("img");
+
 
       img.src =
         file.download_url;
@@ -188,9 +214,11 @@ async function loadGallery(){
       img.decoding =
         "async";
 
+
       img.onerror = () => {
         tile.remove();
       };
+
 
       tile.appendChild(img);
 
@@ -198,14 +226,17 @@ async function loadGallery(){
 
     });
 
+
     const galleryHeight =
       Math.max(
         900,
         imageFiles.length * 68 + 260
       );
 
+
     gallery.style.minHeight =
       `${galleryHeight}vh`;
+
 
     updatePage();
 
@@ -232,6 +263,7 @@ function updateHeader(){
   const scrolled =
     window.scrollY > 60;
 
+
   if(header){
 
     header.classList.toggle(
@@ -240,6 +272,7 @@ function updateHeader(){
     );
 
   }
+
 
   if(footer){
 
@@ -263,11 +296,14 @@ function updateGallery(){
     return;
   }
 
+
   const floatingItems =
     gallery.querySelectorAll(".tile");
 
+
   const scroll =
     window.scrollY;
+
 
   floatingItems.forEach((item,index) => {
 
@@ -276,134 +312,172 @@ function updateGallery(){
         item.dataset.speed || 0.03
       );
 
+
     const baseScale =
       parseFloat(
         item.dataset.scale || 1
       );
 
+
     const phase =
       index * 0.85;
 
+
     let depth = 1;
+
 
     if(index % 3 === 0){
       depth = 1.30;
     }
 
+
     if(index % 3 === 1){
       depth = 0.85;
     }
+
 
     if(index % 3 === 2){
       depth = 0.55;
     }
 
+
     let x = 0;
+
 
     let y =
       scroll *
       baseSpeed *
       depth;
 
+
     if(index % 5 === 0){
 
       x =
         Math.sin(
-          scroll * 0.0017 + phase
+          scroll * 0.0017 +
+          phase
         ) *
         110 *
         depth;
 
+
       y +=
         Math.cos(
-          scroll * 0.0013 + phase
+          scroll * 0.0013 +
+          phase
         ) *
         45 *
         depth;
+
     }
+
 
     if(index % 5 === 1){
 
       x =
         -Math.sin(
-          scroll * 0.0015 + phase
+          scroll * 0.0015 +
+          phase
         ) *
         100 *
         depth;
 
+
       y +=
         Math.sin(
-          scroll * 0.0019 + phase
+          scroll * 0.0019 +
+          phase
         ) *
         55 *
         depth;
+
     }
+
 
     if(index % 5 === 2){
 
       x =
         Math.cos(
-          scroll * 0.0017 + phase
+          scroll * 0.0017 +
+          phase
         ) *
         85 *
         depth;
 
+
       y +=
         Math.sin(
-          scroll * 0.0012 + phase
+          scroll * 0.0012 +
+          phase
         ) *
         85 *
         depth;
+
     }
+
 
     if(index % 5 === 3){
 
       x =
         Math.sin(
-          scroll * 0.0013 + phase
+          scroll * 0.0013 +
+          phase
         ) *
         130 *
         depth;
 
+
       y +=
         Math.cos(
-          scroll * 0.0017 + phase
+          scroll * 0.0017 +
+          phase
         ) *
         65 *
         depth;
+
     }
+
 
     if(index % 5 === 4){
 
       x =
         -Math.cos(
-          scroll * 0.0015 + phase
+          scroll * 0.0015 +
+          phase
         ) *
         95 *
         depth;
 
+
       y +=
         Math.sin(
-          scroll * 0.0016 + phase
+          scroll * 0.0016 +
+          phase
         ) *
         75 *
         depth;
+
     }
+
 
     const scale =
       baseScale +
       Math.sin(
-        scroll * 0.00125 + phase
+        scroll * 0.00125 +
+        phase
       ) *
       0.045 *
       depth;
 
+
     const rotate =
       Math.sin(
-        scroll * 0.0009 + phase
+        scroll * 0.0009 +
+        phase
       ) *
       0.8 *
       depth;
+
 
     item.style.transform =
       `translate3d(
@@ -420,79 +494,38 @@ function updateGallery(){
 
 
 /* =========================================
-   WATERMARK
-   FIRST COMPOSITION
    UNDER / OVER / CONSTRUCTION / DEFINED
+   FIRST SECTION ONLY
    ========================================= */
 
-const watermarkCycles = [
+const firstWatermark = [
+  {
+    text:"UNDER",
+    direction:-1,
+    delay:0.00,
+    speed:1.00
+  },
 
-  [
-    {
-      text:"UNDER",
-      direction:-1,
-      speed:1.00,
-      lead:true
-    },
+  {
+    text:"OVER",
+    direction:1,
+    delay:0.00,
+    speed:0.90
+  },
 
-    {
-      text:"OVER",
-      direction:-1,
-      speed:0.88,
-      lead:true
-    },
+  {
+    text:"CONSTRUCTION",
+    direction:-1,
+    delay:0.075,
+    speed:1.06
+  },
 
-    {
-      text:"CONSTRUCTION",
-      direction:1,
-      speed:1.08,
-      lead:false
-    },
-
-    {
-      text:"DEFINED",
-      direction:1,
-      speed:0.94,
-      lead:false
-    }
-  ],
-
-
-  /*
-    Second composition remains
-    unchanged for now.
-  */
-
-  [
-    {
-      text:"OVER",
-      direction:-1,
-      speed:0.94,
-      lead:true
-    },
-
-    {
-      text:"UNDER",
-      direction:1,
-      speed:1.07,
-      lead:true
-    },
-
-    {
-      text:"DEFINED",
-      direction:-1,
-      speed:0.90,
-      lead:false
-    },
-
-    {
-      text:"UNDERSTOOD",
-      direction:1,
-      speed:1.03,
-      lead:false
-    }
-  ]
-
+  {
+    text:"DEFINED",
+    direction:1,
+    delay:0.075,
+    speed:0.96
+  }
 ];
 
 
@@ -506,71 +539,74 @@ function createWatermark(){
     return;
   }
 
+
   const watermark =
     document.createElement("div");
+
 
   watermark.className =
     "scroll-watermark";
 
 
-  watermarkCycles
-    .forEach(
-      (cycle,cycleIndex)=>{
-
-        const cycleElement =
-          document.createElement("div");
-
-        cycleElement.className =
-          `watermark-cycle watermark-cycle-${cycleIndex}`;
+  const cycle =
+    document.createElement("div");
 
 
-        cycle.forEach(
-          (word)=>{
-
-            const line =
-              document.createElement("div");
-
-            line.className =
-              "watermark-line";
+  cycle.className =
+    "watermark-cycle";
 
 
-            const text =
-              document.createElement("div");
+  firstWatermark.forEach(
+    word => {
 
-            text.className =
-              "watermark-word";
-
-
-            text.textContent =
-              word.text;
+      const line =
+        document.createElement("div");
 
 
-            text.dataset.direction =
-              word.direction;
+      line.className =
+        "watermark-line";
 
 
-            text.dataset.speed =
-              word.speed;
+      const text =
+        document.createElement("div");
 
 
-            text.dataset.lead =
-              word.lead;
+      text.className =
+        "watermark-word";
 
 
-            line.appendChild(text);
-
-            cycleElement.appendChild(line);
-
-          }
-        );
+      text.textContent =
+        word.text;
 
 
-        watermark.appendChild(
-          cycleElement
-        );
+      text.dataset.direction =
+        word.direction;
 
-      }
-    );
+
+      text.dataset.delay =
+        word.delay;
+
+
+      text.dataset.speed =
+        word.speed;
+
+
+      line.appendChild(
+        text
+      );
+
+
+      cycle.appendChild(
+        line
+      );
+
+    }
+  );
+
+
+  watermark.appendChild(
+    cycle
+  );
 
 
   document.body.appendChild(
@@ -602,11 +638,6 @@ function createWatermark(){
       position:absolute;
       inset:0;
 
-      opacity:0;
-    }
-
-
-    .watermark-cycle-0{
       opacity:1;
     }
 
@@ -630,33 +661,21 @@ function createWatermark(){
     }
 
 
-    .watermark-cycle-0
-    .watermark-line:nth-child(1),
-    .watermark-cycle-1
     .watermark-line:nth-child(1){
       top:8vh;
     }
 
 
-    .watermark-cycle-0
-    .watermark-line:nth-child(2),
-    .watermark-cycle-1
     .watermark-line:nth-child(2){
       top:31vh;
     }
 
 
-    .watermark-cycle-0
-    .watermark-line:nth-child(3),
-    .watermark-cycle-1
     .watermark-line:nth-child(3){
       top:54vh;
     }
 
 
-    .watermark-cycle-0
-    .watermark-line:nth-child(4),
-    .watermark-cycle-1
     .watermark-line:nth-child(4){
       top:77vh;
     }
@@ -693,7 +712,8 @@ function createWatermark(){
         transform,
         opacity;
 
-      transform-origin:center center;
+      transform-origin:
+        center center;
 
       opacity:.92;
     }
@@ -728,15 +748,15 @@ function updateWatermark(){
     );
 
 
-  const cycles =
+  const elements =
     document.querySelectorAll(
-      ".watermark-cycle"
+      ".watermark-word"
     );
 
 
   if(
     !watermark ||
-    !cycles.length
+    !elements.length
   ){
     return;
   }
@@ -761,263 +781,196 @@ function updateWatermark(){
     );
 
 
-  let activeCycle;
-
-  let cycleProgress;
-
-
-  if(progress < .5){
-
-    activeCycle = 0;
-
-    cycleProgress =
-      progress * 2;
-
-  }
-
-  else{
-
-    activeCycle = 1;
-
-    cycleProgress =
-      (progress - .5) * 2;
-
-  }
-
-
   /*
-    Smooth transition between
-    the two compositions.
+    Section 1 occupies the first
+    half of the page.
+
+    We intentionally stop the
+    watermark after this section.
   */
 
-  const transitionZone =
-    .055;
-
-
-  if(
-    progress >
-      .5 - transitionZone &&
-    progress <
-      .5 + transitionZone
-  ){
-
-    const transitionProgress =
-      (
-        progress -
-        (.5 - transitionZone)
-      ) /
-      (transitionZone * 2);
-
-
-    cycles[0].style.opacity =
-      1 -
-      transitionProgress;
-
-
-    cycles[1].style.opacity =
-      transitionProgress;
-
-  }
-
-  else{
-
-    cycles.forEach(
-      (cycle,index)=>{
-
-        cycle.style.opacity =
-          index === activeCycle
-            ? 1
-            : 0;
-
-      }
+  const sectionProgress =
+    Math.min(
+      progress * 2,
+      1
     );
 
-  }
 
+  elements.forEach(
+    (element,index)=>{
 
-  cycles.forEach(
-    (cycle,cycleIndex)=>{
-
-      const elements =
-        cycle.querySelectorAll(
-          ".watermark-word"
+      const direction =
+        parseFloat(
+          element.dataset.direction
         );
 
 
-      let localProgress;
+      const delay =
+        parseFloat(
+          element.dataset.delay
+        );
 
 
-      if(cycleIndex === 0){
-
-        localProgress =
-          Math.min(
-            Math.max(
-              progress * 2,
-              0
-            ),
-            1
-          );
-
-      }
-
-      else{
-
-        localProgress =
-          Math.min(
-            Math.max(
-              (progress - .5) * 2,
-              0
-            ),
-            1
-          );
-
-      }
+      const speed =
+        parseFloat(
+          element.dataset.speed
+        );
 
 
-      elements.forEach(
-        (element,index)=>{
+      /*
+        Delay the entrance of
+        CONSTRUCTION and DEFINED.
+      */
 
-          const direction =
-            parseFloat(
-              element.dataset.direction
-            );
-
-
-          const speed =
-            parseFloat(
-              element.dataset.speed ||
-              1
-            );
-
-
-          const isLead =
-            element.dataset.lead ===
-            "true";
-
-
-          /*
-            UNDER and OVER lead their
-            respective following word.
-          */
-
-          const leadOffset =
-            isLead
-              ? direction === -1
-                ? .12
-                : -.12
-              : 0;
-
-
-          const individualProgress =
-            Math.min(
-              Math.max(
-                localProgress *
-                speed +
-                index * .018 +
-                leadOffset,
-                0
-              ),
-              1
-            );
-
-
-          const travel =
-            window.innerWidth *
-            1.45;
-
-
-          const start =
-            direction === -1
-              ? window.innerWidth + 120
-              : -travel - 120;
-
-
-          const end =
-            direction === -1
-              ? -travel - 120
-              : window.innerWidth + 120;
-
-
-          const x =
-            start +
+      const localProgress =
+        Math.min(
+          Math.max(
             (
-              end -
-              start
-            ) *
-            individualProgress;
+              sectionProgress -
+              delay
+            ) /
+            (1 - delay),
+            0
+          ),
+          1
+        );
 
 
-          const y =
-            Math.sin(
-              individualProgress *
-              Math.PI *
-              2 +
-              index
-            ) *
-            24;
+      /*
+        Give each line its own
+        travel distance.
+      */
+
+      const travel =
+        window.innerWidth *
+        1.45;
 
 
-          const rotationY =
-            Math.sin(
-              individualProgress *
-              Math.PI *
-              2
-            ) *
-            22;
+      /*
+        Right → left:
+        UNDER
+        CONSTRUCTION
+
+        Left → right:
+        OVER
+        DEFINED
+      */
+
+      const start =
+        direction === -1
+          ? window.innerWidth + 120
+          : -travel - 120;
 
 
-          const scale =
-            1 +
-            Math.sin(
-              individualProgress *
-              Math.PI *
-              2 +
-              index
-            ) *
-            .025;
+      const end =
+        direction === -1
+          ? -travel - 120
+          : window.innerWidth + 120;
 
 
-          element.style.transform =
-            `
-            translate3d(
-              ${x}px,
-              ${y}px,
-              0
-            )
-            rotateY(${rotationY}deg)
-            scale(${scale})
-            `;
+      /*
+        Different speeds for lines
+        travelling in the same direction.
+      */
 
-        }
-      );
+      const individualProgress =
+        Math.min(
+          Math.max(
+            localProgress *
+            speed,
+            0
+          ),
+          1
+        );
+
+
+      const x =
+        start +
+        (
+          end -
+          start
+        ) *
+        individualProgress;
+
+
+      /*
+        Subtle vertical movement.
+      */
+
+      const y =
+        Math.sin(
+          individualProgress *
+          Math.PI *
+          2 +
+          index
+        ) *
+        24;
+
+
+      /*
+        Slight 3D rotation.
+      */
+
+      const rotationY =
+        Math.sin(
+          individualProgress *
+          Math.PI *
+          2
+        ) *
+        22;
+
+
+      const scale =
+        1 +
+        Math.sin(
+          individualProgress *
+          Math.PI *
+          2 +
+          index
+        ) *
+        .025;
+
+
+      element.style.transform =
+        `
+        translate3d(
+          ${x}px,
+          ${y}px,
+          0
+        )
+        rotateY(${rotationY}deg)
+        scale(${scale})
+        `;
 
     }
   );
 
 
-  if(progress > .94){
+  /*
+    Fade the first composition out
+    smoothly as the first half ends.
+  */
 
-    const fade =
+  let opacity = 1;
+
+
+  if(sectionProgress > .88){
+
+    opacity =
       1 -
       (
-        (progress - .94) /
-        .06
-      );
-
-
-    watermark.style.opacity =
-      Math.max(
-        fade,
-        0
+        (sectionProgress - .88) /
+        .12
       );
 
   }
 
-  else{
 
-    watermark.style.opacity = 1;
-
-  }
+  watermark.style.opacity =
+    Math.max(
+      opacity,
+      0
+    );
 
 }
 
@@ -1067,11 +1020,13 @@ if(
   let mouseY =
     window.innerHeight / 2;
 
+
   let cursorX =
     mouseX;
 
   let cursorY =
     mouseY;
+
 
   let previousX =
     cursorX;
@@ -1089,6 +1044,7 @@ if(
 
       mouseY =
         event.clientY;
+
 
       cursor.classList.remove(
         "hidden"
@@ -1232,6 +1188,10 @@ if(
 
 }
 
+
+/* =========================================
+   START
+   ========================================= */
 
 loadGallery();
 updatePage();
