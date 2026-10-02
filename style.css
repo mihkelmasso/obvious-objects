@@ -750,3 +750,84 @@ footer.scrolled{
   }
 
 }
+/* =========================================
+   SEO CONTENT
+   ========================================= */
+
+.seo-intro{
+  position:fixed;
+  left:50%;
+  top:50%;
+  width:320px;
+  transform:translate(-50%,-50%);
+  z-index:5;
+  pointer-events:none;
+  opacity:0;
+}
+
+.seo-intro h1,
+.seo-intro p{
+  margin:0;
+}
+
+
+/* =========================================
+   SERVICES
+   ========================================= */
+
+.services{
+  position:relative;
+  z-index:4;
+
+  width:320px;
+
+  margin-left:7vw;
+  margin-top:40vh;
+
+  padding-bottom:20vh;
+
+  opacity:.9;
+}
+
+.services h2{
+  margin:0 0 24px 0;
+
+  font-size:24px;
+  font-weight:400;
+  line-height:1;
+}
+
+.services ul{
+  list-style:none;
+
+  margin:0;
+  padding:0;
+}
+
+.services li{
+  border-top:1px solid rgba(0,0,0,.18);
+
+  padding:13px 0;
+
+  font-size:14px;
+  line-height:1.2;
+}
+
+.services li:last-child{
+  border-bottom:1px solid rgba(0,0,0,.18);
+}
+
+
+/* =========================================
+   KEEP SERVICES SUBTLE
+   ========================================= */
+
+@media(max-width:900px){
+
+  .services{
+    width:calc(100vw - 40px);
+    margin-left:20px;
+    margin-top:30vh;
+  }
+
+}
