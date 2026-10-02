@@ -34,23 +34,27 @@ async function loadGallery(){
     const files =
       await response.json();
 
-    const imageFiles =
-      files
-        .filter(file => {
-          return file.type === "file" &&
-            /\.(jpg|jpeg|png|webp|avif)$/i.test(file.name);
-        })
-        .sort((a,b) =>
-          a.name.localeCompare(
-            b.name,
-            undefined,
-            {
-              numeric:true,
-              sensitivity:"base"
-            }
-          )
-        );
+const imageFiles =
+  files.filter(file => {
+    return file.type === "file" &&
+      /\.(jpg|jpeg|png|webp|avif)$/i.test(file.name);
+  });
 
+for(let i = imageFiles.length - 1; i > 0; i--){
+
+  const j =
+    Math.floor(
+      Math.random() * (i + 1)
+    );
+
+  [
+    imageFiles[i],
+    imageFiles[j]
+  ] = [
+    imageFiles[j],
+    imageFiles[i]
+  ];
+}
     gallery
       .querySelectorAll(".tile")
       .forEach(tile => tile.remove());
