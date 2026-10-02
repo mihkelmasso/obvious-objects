@@ -82,7 +82,6 @@ async function loadGallery(){
       const pattern =
         index % 8;
 
-
       let width;
       let left;
       let top;
@@ -252,13 +251,14 @@ async function loadGallery(){
 
       tile.appendChild(img);
 
+
       gallery.appendChild(tile);
 
     });
 
 
     /*
-      Much tighter vertical rhythm.
+      Keep the gallery compact.
     */
 
     const galleryHeight =
@@ -273,8 +273,11 @@ async function loadGallery(){
 
 
     /*
-      Give the contact area enough room
-      to become the final visual section.
+      Compact contact ending.
+
+      Previously this was tied to the
+      gallery height and created a huge
+      empty final area.
     */
 
     const contact =
@@ -286,10 +289,7 @@ async function loadGallery(){
     if(contact){
 
       contact.style.minHeight =
-        `${Math.max(
-          100,
-          galleryHeight / 2
-        )}vh`;
+        "78vh";
 
     }
 
@@ -580,14 +580,14 @@ const watermarkSections = [
       text:"UNDER",
       direction:-1,
       delay:0,
-      speed:0.58
+      speed:0.78
     },
 
     {
       text:"CONSTRUCTION",
       direction:-1,
       delay:0.12,
-      speed:0.62
+      speed:0.82
     }
   ],
 
@@ -597,14 +597,14 @@ const watermarkSections = [
       text:"UNDER",
       direction:1,
       delay:0,
-      speed:0.56
+      speed:0.76
     },
 
     {
       text:"CONSTRUCTION",
       direction:1,
       delay:0.12,
-      speed:0.60
+      speed:0.80
     }
   ],
 
@@ -614,7 +614,7 @@ const watermarkSections = [
       text:"CONTACT",
       direction:-1,
       delay:0,
-      speed:0.40
+      speed:0.48
     }
   ]
 
@@ -782,7 +782,7 @@ function createWatermark(){
 
     .watermark-section-2
     .watermark-line:nth-child(1){
-      top:13vh;
+      top:12vh;
     }
 
 
@@ -942,7 +942,9 @@ function updateWatermark(){
 
 
       if(index === sectionIndex){
+
         opacity = 1;
+
       }
 
 
@@ -1043,7 +1045,7 @@ function updateWatermark(){
 
 
           /*
-            Upper line appears first.
+            Upper word enters first.
           */
 
           const delayedProgress =
@@ -1072,10 +1074,9 @@ function updateWatermark(){
 
 
           /*
-            CONTACT is deliberately
-            stopped on the right side
-            so it never travels over
-            the contact form on the left.
+            CONTACT settles at the
+            upper-right and never crosses
+            the contact form.
           */
 
           if(
@@ -1094,11 +1095,6 @@ function updateWatermark(){
               window.innerWidth +
               160;
 
-
-            /*
-              Right edge of CONTACT
-              settles around 94vw.
-            */
 
             const targetX =
               window.innerWidth *
